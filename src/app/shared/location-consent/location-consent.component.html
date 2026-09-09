@@ -4,14 +4,14 @@
       <p class="eyebrow">Localização obrigatória</p>
       <h2 id="geo-title">É preciso permitir a localização para acessar o site</h2>
       <p id="geo-text">
-        Clique em permitir e, se o navegador pedir, aceite também na barra de endereço.
+        O site pediu a localização ao abrir, mas o acesso foi recusado.
         Sem essa permissão, o site permanece bloqueado.
       </p>
       @if (visits.lastError()) {
         <p class="error">{{ visits.lastError() }}</p>
       }
       <button class="btn btn-primary" type="button" (click)="accept()" [disabled]="visits.capturing()">
-        {{ visits.capturing() ? 'Solicitando acesso…' : 'Permitir localização' }}
+        {{ visits.capturing() ? 'Solicitando acesso…' : 'Tentar novamente' }}
       </button>
     </div>
   </div>

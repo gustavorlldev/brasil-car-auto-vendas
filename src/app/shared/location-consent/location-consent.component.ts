@@ -1,4 +1,4 @@
-import { Component, computed, effect, inject } from '@angular/core';
+import { Component, computed, effect, inject, untracked } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router } from '@angular/router';
 import { filter, map, startWith } from 'rxjs';
@@ -40,9 +40,7 @@ export class LocationConsentComponent {
 
     effect(() => {
       const path = this.path() || '/';
-      if (this.visits.consent() === 'accepted' && !path.startsWith('/admin')) {
-        void this.visits.tryCapture(path);
-      }
+      untracked(() => this.visits.ensureAccess(path));
     });
   }
 
