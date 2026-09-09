@@ -1,0 +1,41 @@
+<section class="page">
+  <div class="container">
+    @if (auth.user(); as user) {
+      <div class="head">
+        <div>
+          <p class="eyebrow">Painel do anunciante</p>
+          <h1>Olá, {{ user.name }}</h1>
+          <p>{{ user.city }}/{{ user.state }} · {{ user.role === 'revenda' ? 'Revenda' : 'Particular' }}</p>
+        </div>
+        <a routerLink="/anunciar" class="btn btn-primary">Novo anúncio</a>
+      </div>
+
+      @if (ads().length === 0) {
+        <div class="empty-state">
+          <h3>Você ainda não anunciou</h3>
+          <p>Publique seu primeiro carro e ele entra no estoque na hora.</p>
+          <a routerLink="/anunciar" class="btn btn-primary">Anunciar veículo</a>
+        </div>
+      } @else {
+        <div class="list">
+          @for (ad of ads(); track ad.id) {
+            <article>
+              <img [src]="ad.images[0]" [alt]="ad.model" />
+              <div>
+                <h3>{{ ad.brand }} {{ ad.model }}</h3>
+                <p>{{ ad.price | brl }} · {{ ad.plate }} · {{ ad.published === false ? 'Pausado' : 'Ativo' }}</p>
+              </div>
+              <div class="ops">
+                <a class="btn btn-outline" [routerLink]="['/veiculo', ad.slug]">Ver</a>
+                <button class="btn btn-outline" type="button" (click)="vehicles.togglePublished(ad.id)">
+                  {{ ad.published === false ? 'Publicar' : 'Pausar' }}
+                </button>
+                <button class="btn btn-ghost" type="button" (click)="vehicles.remove(ad.id)">Excluir</button>
+              </div>
+            </article>
+          }
+        </div>
+      }
+    }
+  </div>
+</section>

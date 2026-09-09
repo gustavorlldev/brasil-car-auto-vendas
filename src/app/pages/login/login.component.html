@@ -1,0 +1,16 @@
+<section class="page">
+  <div class="container auth">
+    <form (ngSubmit)="submit()">
+      <p class="eyebrow">Acesso</p>
+      <h1>Entrar na Brasil Car</h1>
+      <p class="hint">Use a conta demo: maria.s&#64;brasilcar.com.br / demo123</p>
+      <label class="field"><span>E-mail</span><input [(ngModel)]="email" name="email" type="email" required /></label>
+      <label class="field"><span>Senha</span><input [(ngModel)]="password" name="password" type="password" required /></label>
+      @if (error()) {
+        <p class="error">{{ error() }}</p>
+      }
+      <button class="btn btn-primary" type="submit">Entrar</button>
+      <p>Não tem conta? <a routerLink="/cadastrar">Criar agora</a></p>
+    </form>
+  </div>
+</section>

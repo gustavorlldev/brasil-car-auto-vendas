@@ -1,0 +1,113 @@
+<section class="page">
+  <div class="container">
+    <div class="head">
+      <div>
+        <p class="eyebrow">Estoque Brasil Cars</p>
+        <h1>Nossos veículos</h1>
+        <p>{{ results().length }} carros no pátio</p>
+      </div>
+      <label class="field sort">
+        <span>Ordenar</span>
+        <select [ngModel]="filters().sort" (ngModelChange)="patch('sort', $event)">
+          @for (opt of sorts; track opt.value) {
+            <option [value]="opt.value">{{ opt.label }}</option>
+          }
+        </select>
+      </label>
+    </div>
+
+    <div class="layout">
+      <aside>
+        <label class="field">
+          <span>Busca</span>
+          <input [ngModel]="filters().q" (ngModelChange)="patch('q', $event)" placeholder="Marca ou modelo" />
+        </label>
+        <label class="field">
+          <span>Marca</span>
+          <select [ngModel]="filters().brand" (ngModelChange)="patch('brand', $event)">
+            <option value="">Todas</option>
+            @for (brand of brands; track brand) {
+              <option [value]="brand">{{ brand }}</option>
+            }
+          </select>
+        </label>
+        <label class="field">
+          <span>Modelo</span>
+          <select [ngModel]="filters().model" (ngModelChange)="patch('model', $event)" [disabled]="!models().length">
+            <option value="">Todos</option>
+            @for (model of models(); track model) {
+              <option [value]="model">{{ model }}</option>
+            }
+          </select>
+        </label>
+        <label class="field">
+          <span>Carroceria</span>
+          <select [ngModel]="filters().body" (ngModelChange)="patch('body', $event)">
+            <option value="">Todas</option>
+            @for (item of bodies; track item[0]) {
+              <option [value]="item[0]">{{ item[1] }}</option>
+            }
+          </select>
+        </label>
+        <label class="field">
+          <span>Combustível</span>
+          <select [ngModel]="filters().fuel" (ngModelChange)="patch('fuel', $event)">
+            <option value="">Todos</option>
+            @for (item of fuels; track item[0]) {
+              <option [value]="item[0]">{{ item[1] }}</option>
+            }
+          </select>
+        </label>
+        <label class="field">
+          <span>Câmbio</span>
+          <select [ngModel]="filters().transmission" (ngModelChange)="patch('transmission', $event)">
+            <option value="">Todos</option>
+            @for (item of transmissions; track item[0]) {
+              <option [value]="item[0]">{{ item[1] }}</option>
+            }
+          </select>
+        </label>
+        <label class="field">
+          <span>Condição</span>
+          <select [ngModel]="filters().condition" (ngModelChange)="patch('condition', $event)">
+            <option value="">Todas</option>
+            @for (item of conditions; track item[0]) {
+              <option [value]="item[0]">{{ item[1] }}</option>
+            }
+          </select>
+        </label>
+        <label class="field">
+          <span>Preço máximo</span>
+          <select [ngModel]="filters().maxPrice" (ngModelChange)="patch('maxPrice', $event ? +$event : null)">
+            <option [ngValue]="null">Qualquer</option>
+            <option [ngValue]="80000">R$ 80 mil</option>
+            <option [ngValue]="120000">R$ 120 mil</option>
+            <option [ngValue]="180000">R$ 180 mil</option>
+            <option [ngValue]="250000">R$ 250 mil</option>
+          </select>
+        </label>
+        <button class="btn btn-outline" type="button" (click)="clear()">Limpar filtros</button>
+      </aside>
+
+      <div>
+        @if (paged().length === 0) {
+          <div class="empty-state">
+            <h3>Nenhum veículo encontrado</h3>
+            <p>Ajuste os filtros ou limpe a busca para ver o estoque completo.</p>
+          </div>
+        } @else {
+          <div class="grid-cards three">
+            @for (car of paged(); track car.id) {
+              <app-vehicle-card [vehicle]="car" />
+            }
+          </div>
+          <div class="pager">
+            <button class="btn btn-outline" type="button" (click)="prev()" [disabled]="page() === 1">Anterior</button>
+            <span>Página {{ page() }} de {{ totalPages() }}</span>
+            <button class="btn btn-outline" type="button" (click)="next()" [disabled]="page() === totalPages()">Próxima</button>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+</section>

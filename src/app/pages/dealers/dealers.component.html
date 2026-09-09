@@ -1,0 +1,20 @@
+<section class="page">
+  <div class="container">
+    <p class="eyebrow">Rede de parceiros</p>
+    <h1>Lojas, revendas e concessionárias</h1>
+    <p class="lead">Parceiros verificados, estoque revisado e atendimento em todo o Brasil.</p>
+    <div class="grid">
+      @for (dealer of dealers.all; track dealer.id) {
+        <a class="card" [routerLink]="['/loja', dealer.slug]">
+          <img [src]="dealer.image" [alt]="dealer.name" />
+          <div>
+            <span class="badge badge-gold">{{ dealer.verified ? 'Verificada' : 'Loja' }}</span>
+            <h2>{{ dealer.name }}</h2>
+            <p>{{ dealer.city }}/{{ dealer.state }} · {{ dealer.rating }} ★ ({{ dealer.reviews }})</p>
+            <p>{{ count(dealer.id) }} veículos no estoque</p>
+          </div>
+        </a>
+      }
+    </div>
+  </div>
+</section>

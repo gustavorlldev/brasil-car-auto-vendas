@@ -1,0 +1,71 @@
+.page {
+  padding: 48px 0 72px;
+}
+
+.wrap {
+  display: grid;
+  grid-template-columns: 0.8fr 1.2fr;
+  gap: 32px;
+}
+
+h1 {
+  font-size: 52px;
+  max-width: 12ch;
+}
+
+.lead {
+  color: var(--muted);
+  margin: 12px 0 24px;
+}
+
+ol {
+  list-style: none;
+  padding: 0;
+}
+
+ol li {
+  padding: 10px 0;
+  color: var(--muted);
+  font-weight: 700;
+}
+
+ol li.on {
+  color: var(--red);
+}
+
+.card {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  padding: 24px;
+}
+
+.two {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin: 16px 0 20px;
+}
+
+.full {
+  grid-column: 1 / -1;
+}
+
+.row {
+  display: flex;
+  gap: 10px;
+}
+
+.check {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 10px;
+  font-size: 14px;
+}
+
+@media (max-width: 900px) {
+  .wrap,
+  .two {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,0 +1,33 @@
+<section class="page">
+  <div class="container auth">
+    <form (ngSubmit)="submit()">
+      <p class="eyebrow">Cadastro</p>
+      <h1>Crie sua conta</h1>
+      <label class="field"><span>Nome</span><input [(ngModel)]="name" name="name" required /></label>
+      <label class="field"><span>E-mail</span><input [(ngModel)]="email" name="email" type="email" required /></label>
+      <label class="field"><span>WhatsApp</span><input [(ngModel)]="phone" name="phone" required placeholder="11999999999" /></label>
+      <div class="two">
+        <label class="field"><span>Cidade</span><input [(ngModel)]="city" name="city" required /></label>
+        <label class="field"><span>UF</span>
+          <select [(ngModel)]="state" name="state">
+            @for (uf of states; track uf) {
+              <option [value]="uf">{{ uf }}</option>
+            }
+          </select>
+        </label>
+      </div>
+      <label class="field"><span>Perfil</span>
+        <select [(ngModel)]="role" name="role">
+          <option value="particular">Particular</option>
+          <option value="revenda">Revenda / loja</option>
+        </select>
+      </label>
+      <label class="field"><span>Senha</span><input [(ngModel)]="password" name="password" type="password" required minlength="6" /></label>
+      @if (error()) {
+        <p class="error">{{ error() }}</p>
+      }
+      <button class="btn btn-primary" type="submit">Criar conta</button>
+      <p>Já tem conta? <a routerLink="/entrar">Entrar</a></p>
+    </form>
+  </div>
+</section>

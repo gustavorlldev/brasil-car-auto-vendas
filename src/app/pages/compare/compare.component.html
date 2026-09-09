@@ -1,0 +1,48 @@
+<section class="page">
+  <div class="container">
+    <p class="eyebrow">Lado a lado</p>
+    <h1>Comparar veículos</h1>
+    @if (cars().length < 2) {
+      <div class="empty-state">
+        <h3>Selecione pelo menos dois carros</h3>
+        <p>Você pode comparar até 3 anúncios. Use o botão Comparar nos cards.</p>
+        <a routerLink="/comprar" class="btn btn-primary">Escolher no estoque</a>
+      </div>
+    } @else {
+      <div class="table" [style.gridTemplateColumns]="'180px repeat(' + cars().length + ', 1fr)'">
+        <div class="label">Veículo</div>
+        @for (car of cars(); track car.id) {
+          <div class="head">
+            <img [src]="car.images[0]" [alt]="car.model" />
+            <h3>{{ car.brand }} {{ car.model }}</h3>
+            <button type="button" (click)="remove(car.id)">Remover</button>
+          </div>
+        }
+        <div class="label">Placa / loja</div>
+        @for (car of cars(); track car.id) {
+          <div>
+            <app-license-plate [plate]="car.plate" store="BRASIL CARS" [compact]="true" />
+          </div>
+        }
+        <div class="label">Preço</div>
+        @for (car of cars(); track car.id) { <div>{{ car.price | brl }}</div> }
+        <div class="label">Ano</div>
+        @for (car of cars(); track car.id) { <div>{{ car.year }}/{{ car.modelYear }}</div> }
+        <div class="label">Km</div>
+        @for (car of cars(); track car.id) { <div>{{ car.mileage | km }}</div> }
+        <div class="label">Combustível</div>
+        @for (car of cars(); track car.id) { <div>{{ labels.fuel[car.fuel] }}</div> }
+        <div class="label">Câmbio</div>
+        @for (car of cars(); track car.id) { <div>{{ labels.transmission[car.transmission] }}</div> }
+        <div class="label">Carroceria</div>
+        @for (car of cars(); track car.id) { <div>{{ labels.body[car.body] }}</div> }
+        <div class="label">Motor</div>
+        @for (car of cars(); track car.id) { <div>{{ car.engine }} · {{ car.horsepower }} cv</div> }
+        <div class="label">Condição</div>
+        @for (car of cars(); track car.id) { <div>{{ labels.condition[car.condition] }}</div> }
+        <div class="label">Loja</div>
+        @for (car of cars(); track car.id) { <div>Brasil Cars · Blumenau/SC</div> }
+      </div>
+    }
+  </div>
+</section>

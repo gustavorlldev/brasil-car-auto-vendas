@@ -1,0 +1,33 @@
+<article class="card">
+  <a [routerLink]="['/veiculo', vehicle().slug]" class="media">
+    <img [src]="vehicle().images[0]" [alt]="vehicle().brand + ' ' + vehicle().model" />
+    <div class="chips">
+      <span class="badge badge-red">{{ condition() }}</span>
+      @if (vehicle().featured) {
+        <span class="badge badge-gold">Destaque</span>
+      }
+    </div>
+    <button class="heart" type="button" (click)="toggleFavorite($event)" [class.on]="favorites.has(vehicle().id)">
+      ♥
+    </button>
+  </a>
+  <div class="body">
+    <p class="meta">{{ vehicle().year }}/{{ vehicle().modelYear }} · Blumenau/SC</p>
+    <h3>
+      <a [routerLink]="['/veiculo', vehicle().slug]">{{ vehicle().brand }} {{ vehicle().model }}</a>
+    </h3>
+    <p class="version">{{ vehicle().version }}</p>
+    <strong>{{ vehicle().price | brl }}</strong>
+    <ul>
+      <li>{{ vehicle().mileage | km }}</li>
+      <li>{{ fuel() }}</li>
+      <li>{{ body() }}</li>
+    </ul>
+    <div class="row">
+      <span>Brasil Cars</span>
+      <button type="button" class="compare" (click)="toggleCompare($event)" [class.on]="compare.has(vehicle().id)">
+        {{ compare.has(vehicle().id) ? 'Na comparação' : 'Comparar' }}
+      </button>
+    </div>
+  </div>
+</article>

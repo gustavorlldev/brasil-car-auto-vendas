@@ -1,0 +1,16 @@
+<section class="page">
+  <div class="container">
+    <p class="eyebrow">Ajuda</p>
+    <h1>Perguntas frequentes</h1>
+    <div class="list">
+      @for (item of items; track item.q; let i = $index) {
+        <article>
+          <button type="button" (click)="toggle(i)">{{ item.q }}</button>
+          @if (open() === i) {
+            <p>{{ item.a }}</p>
+          }
+        </article>
+      }
+    </div>
+  </div>
+</section>

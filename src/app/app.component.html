@@ -1,0 +1,17 @@
+<div class="app-shell">
+  <app-header />
+  <main>
+    <router-outlet />
+  </main>
+  @if (compare.count() > 0) {
+    <div class="compare-bar">
+      <strong>{{ compare.count() }} veículo(s) na comparação</strong>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-ghost" type="button" (click)="compare.clear()">Limpar</button>
+        <a routerLink="/comparar" class="btn btn-primary">Comparar agora</a>
+      </div>
+    </div>
+  }
+  <app-location-consent />
+  <app-footer />
+</div>

@@ -1,0 +1,157 @@
+.page {
+  padding: 28px 0 72px;
+}
+
+.back {
+  display: inline-block;
+  margin-bottom: 16px;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1.4fr 0.8fr;
+  gap: 22px;
+  align-items: start;
+}
+
+.gallery .stage {
+  position: relative;
+}
+
+.gallery .stage img {
+  width: 100%;
+  height: 460px;
+  object-fit: cover;
+  border-radius: 22px;
+}
+
+.thumbs {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.thumbs button {
+  border: 2px solid transparent;
+  padding: 0;
+  border-radius: 12px;
+  overflow: hidden;
+  width: 92px;
+  height: 64px;
+}
+
+.thumbs button.on {
+  border-color: var(--red);
+}
+
+.thumbs img {
+  height: 64px;
+  width: 100%;
+  object-fit: cover;
+  border-radius: 10px;
+}
+
+.panel,
+.offer {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  padding: 22px;
+  margin-top: 16px;
+}
+
+.offer {
+  margin-top: 0;
+}
+
+.meta,
+.version,
+.fipe,
+.phone,
+.seller p {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+h1 {
+  font-size: 42px;
+  line-height: 1;
+}
+
+.offer strong {
+  display: block;
+  font-size: 32px;
+  margin: 10px 0 6px;
+}
+
+.chips,
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 14px 0;
+}
+
+.actions {
+  flex-direction: column;
+}
+
+.specs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.specs span,
+.result span,
+.result small {
+  display: block;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.features {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 0;
+  margin: 16px 0 0;
+  list-style: none;
+}
+
+.features li {
+  background: var(--paper);
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 13px;
+}
+
+.result {
+  margin-top: 12px;
+}
+
+.result b {
+  font-size: 28px;
+}
+
+.related {
+  margin-top: 48px;
+}
+
+.related h2 {
+  margin-bottom: 18px;
+  font-size: 36px;
+}
+
+@media (max-width: 960px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+
+  .gallery .stage img {
+    height: 280px;
+  }
+}

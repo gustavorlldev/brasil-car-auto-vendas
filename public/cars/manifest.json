@@ -1,0 +1,163 @@
+[
+  {
+    "key": "strada",
+    "q": "Fiat Strada Volcano 2024",
+    "files": []
+  },
+  {
+    "key": "polo",
+    "q": "Volkswagen Polo 2023 hatch Brazil",
+    "files": []
+  },
+  {
+    "key": "onix",
+    "q": "Chevrolet Onix hatch 2023",
+    "files": []
+  },
+  {
+    "key": "hb20",
+    "q": "Hyundai HB20 2023",
+    "files": [
+      "public\\cars\\hb20-1.jpg 2689225",
+      "public\\cars\\hb20-2.jpg 2909176"
+    ]
+  },
+  {
+    "key": "argo",
+    "q": "Fiat Argo 2023",
+    "files": [
+      "public\\cars\\argo-1.jpg 564415",
+      "public\\cars\\argo-2.jpg 505206"
+    ]
+  },
+  {
+    "key": "tcross",
+    "q": "Volkswagen T-Cross 2022",
+    "files": [
+      "public\\cars\\tcross-1.jpg 666267",
+      "public\\cars\\tcross-2.jpg 703940"
+    ]
+  },
+  {
+    "key": "compass",
+    "q": "Jeep Compass 2022 Brazil",
+    "files": []
+  },
+  {
+    "key": "creta",
+    "q": "Hyundai Creta 2022 Brazil",
+    "files": []
+  },
+  {
+    "key": "pulse",
+    "q": "Fiat Pulse 2022",
+    "files": [
+      "public\\cars\\pulse-1.jpg 2765223",
+      "public\\cars\\pulse-2.jpg 2835092"
+    ]
+  },
+  {
+    "key": "corolla",
+    "error": "429 https://upload.wikimedia.org/wikipedia/commons/f/f7/Toyota_Corolla_Sedan_%28Brazil%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled"
+  },
+  {
+    "key": "corolla-cross",
+    "q": "Toyota Corolla Cross 2022",
+    "files": [
+      "public\\cars\\corolla-cross-1.jpg 566629",
+      "public\\cars\\corolla-cross-2.jpg 489061"
+    ]
+  },
+  {
+    "key": "saveiro",
+    "q": "Volkswagen Saveiro 2022",
+    "files": [
+      "public\\cars\\saveiro-1.jpg 669335",
+      "public\\cars\\saveiro-2.jpg 641058"
+    ]
+  },
+  {
+    "key": "tracker",
+    "q": "Chevrolet Tracker 2021 Brazil",
+    "files": [
+      "public\\cars\\tracker-1.jpg 1123563",
+      "public\\cars\\tracker-2.jpg 1136316"
+    ]
+  },
+  {
+    "key": "kwid",
+    "q": "Renault Kwid 2023",
+    "files": [
+      "public\\cars\\kwid-1.jpg 730506",
+      "public\\cars\\kwid-2.jpg 459412"
+    ]
+  },
+  {
+    "key": "mobi",
+    "error": "Unexpected token 'Y', \"You are ma\"... is not valid JSON"
+  },
+  {
+    "key": "hrv",
+    "error": "Unexpected token 'Y', \"You are ma\"... is not valid JSON"
+  },
+  {
+    "key": "kicks",
+    "error": "Unexpected token 'Y', \"You are ma\"... is not valid JSON"
+  },
+  {
+    "key": "nivus",
+    "error": "Unexpected token 'Y', \"You are ma\"... is not valid JSON"
+  },
+  {
+    "key": "virtus",
+    "error": "Unexpected token 'Y', \"You are ma\"... is not valid JSON"
+  },
+  {
+    "key": "city",
+    "error": "Unexpected token 'Y', \"You are ma\"... is not valid JSON"
+  },
+  {
+    "key": "cronos",
+    "error": "Unexpected token 'Y', \"You are ma\"... is not valid JSON"
+  },
+  {
+    "key": "renegade",
+    "error": "Unexpected token 'Y', \"You are ma\"... is not valid JSON"
+  },
+  {
+    "key": "montana",
+    "error": "Unexpected token 'Y', \"You are ma\"... is not valid JSON"
+  },
+  {
+    "key": "dolphin",
+    "error": "Unexpected token 'Y', \"You are ma\"... is not valid JSON"
+  },
+  {
+    "key": "versa",
+    "error": "Unexpected token 'Y', \"You are ma\"... is not valid JSON"
+  },
+  {
+    "key": "toro",
+    "error": "Unexpected token 'Y', \"You are ma\"... is not valid JSON"
+  },
+  {
+    "key": "fastback",
+    "error": "Unexpected token 'Y', \"You are ma\"... is not valid JSON"
+  },
+  {
+    "key": "onix-plus",
+    "error": "Unexpected token 'Y', \"You are ma\"... is not valid JSON"
+  },
+  {
+    "key": "civic",
+    "error": "Unexpected token 'Y', \"You are ma\"... is not valid JSON"
+  },
+  {
+    "key": "hilux",
+    "error": "Unexpected token 'Y', \"You are ma\"... is not valid JSON"
+  },
+  {
+    "key": "tiggo5x",
+    "error": "Unexpected token 'Y', \"You are ma\"... is not valid JSON"
+  }
+]

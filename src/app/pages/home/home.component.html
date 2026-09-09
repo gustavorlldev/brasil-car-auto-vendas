@@ -1,0 +1,125 @@
+<section class="hero">
+  <div class="container hero-grid">
+    <div>
+      <p class="eyebrow">Loja de veículos em Blumenau</p>
+      <h1>O estoque da Brasil Cars, com garantia da própria loja.</h1>
+      <p class="lead">
+        Seminovos revisados, 0 km e utilitários selecionados no Vale do Itajaí. Um único pátio em Blumenau, um único time de vendas e placa de vitrine Brasil Cars.
+      </p>
+      <form class="search" (ngSubmit)="search()">
+        <label class="field">
+          <span>O que você busca</span>
+          <input [(ngModel)]="q" name="q" placeholder="Corolla, Strada, SUV..." />
+        </label>
+        <label class="field">
+          <span>Marca</span>
+          <select [(ngModel)]="brand" name="brand">
+            <option value="">Todas</option>
+            @for (item of brands; track item) {
+              <option [value]="item">{{ item }}</option>
+            }
+          </select>
+        </label>
+        <label class="field">
+          <span>Até</span>
+          <select [(ngModel)]="maxPrice" name="maxPrice">
+            <option [ngValue]="null">Qualquer preço</option>
+            <option [ngValue]="80000">R$ 80 mil</option>
+            <option [ngValue]="120000">R$ 120 mil</option>
+            <option [ngValue]="180000">R$ 180 mil</option>
+            <option [ngValue]="250000">R$ 250 mil</option>
+          </select>
+        </label>
+        <button class="btn btn-primary" type="submit">Buscar no estoque</button>
+      </form>
+      <div class="stats">
+        <div><b>{{ vehicles.all().length }}</b><small>carros no pátio</small></div>
+        <div><b>12 meses</b><small>garantia da loja</small></div>
+        <div><b>1 loja</b><small>Blumenau / SC</small></div>
+      </div>
+    </div>
+    <div class="hero-photo">
+      <img src="/cars/corolla-cross-1.jpg" alt="Estoque Brasil Cars" />
+      <div class="floating">
+        <span>Showroom Brasil Cars</span>
+        <strong>Seminovos e 0 km com garantia</strong>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <div class="section-head">
+      <div>
+        <p class="eyebrow">Atalhos</p>
+        <h2>Comece pelo tipo de carro</h2>
+      </div>
+    </div>
+    <div class="cats">
+      @for (cat of categories; track cat.label) {
+        <a class="cat" [routerLink]="['/comprar']" [queryParams]="cat.query">
+          <img [src]="cat.image" [alt]="cat.label" />
+          <span>{{ cat.label }}</span>
+        </a>
+      }
+    </div>
+  </div>
+</section>
+
+<section class="section alt">
+  <div class="container">
+    <div class="section-head">
+      <div>
+        <p class="eyebrow">Destaques da semana</p>
+        <h2>Seleção do pátio</h2>
+      </div>
+      <a routerLink="/comprar" class="btn btn-outline">Ver estoque</a>
+    </div>
+    <div class="grid-cards">
+      @for (car of featured(); track car.id) {
+        <app-vehicle-card [vehicle]="car" />
+      }
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container split">
+    <div>
+      <p class="eyebrow">Como comprar</p>
+      <h2>Do estoque até a entrega, com a Brasil Cars.</h2>
+    </div>
+    <div class="steps">
+      @for (step of steps; track step.n) {
+        <article>
+          <span>{{ step.n }}</span>
+          <h3>{{ step.title }}</h3>
+          <p>{{ step.text }}</p>
+        </article>
+      }
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container quotes">
+    @for (item of testimonials; track item.name) {
+      <blockquote>
+        <p>“{{ item.text }}”</p>
+        <cite>{{ item.name }} · {{ item.city }}</cite>
+      </blockquote>
+    }
+  </div>
+</section>
+
+<section class="cta">
+  <div class="container cta-box">
+    <div>
+      <p class="eyebrow">Visite a loja</p>
+      <h2>Agende um test-drive no pátio da Brasil Cars.</h2>
+      <p>{{ company.address }} · {{ company.hours }}</p>
+    </div>
+    <a [href]="whatsapp" target="_blank" rel="noopener" class="btn btn-primary">WhatsApp da loja</a>
+  </div>
+</section>

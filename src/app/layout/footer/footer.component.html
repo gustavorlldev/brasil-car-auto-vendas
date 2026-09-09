@@ -1,0 +1,45 @@
+<footer class="footer">
+  <div class="container grid">
+    <div>
+      <div class="logo">
+        <span class="mark">BC</span>
+        <span>
+          <strong>Brasil Cars</strong>
+          <small>Auto Vendas</small>
+        </span>
+      </div>
+      <p>
+        Loja de veículos em Blumenau, Santa Catarina. Seminovos revisados, 0 km e utilitários com garantia da Brasil Cars
+        e atendimento direto no pátio.
+      </p>
+    </div>
+
+    <div>
+      <h4>Estoque</h4>
+      <a routerLink="/comprar">Ver todos os carros</a>
+      <a routerLink="/comprar" [queryParams]="{ condition: 'novo' }">0 km</a>
+      <a routerLink="/comprar" [queryParams]="{ body: 'suv' }">SUVs</a>
+      <a routerLink="/comprar" [queryParams]="{ body: 'pickup' }">Picapes</a>
+      <a routerLink="/comparar">Comparar veículos</a>
+    </div>
+
+    <div>
+      <h4>A empresa</h4>
+      <a routerLink="/sobre">Sobre a Brasil Cars</a>
+      <a routerLink="/faq">Perguntas frequentes</a>
+      <a routerLink="/contato">Fale conosco</a>
+    </div>
+
+    <div>
+      <h4>Atendimento</h4>
+      <p>(47) 3333-2026</p>
+      <p>contato&#64;brasilcars.com.br</p>
+      <p>Seg a sáb, 8h às 20h</p>
+      <p>Rua 7 de Setembro, 1.215 — Centro, Blumenau/SC</p>
+    </div>
+  </div>
+  <div class="container legal">
+    <span>© {{ year }} Brasil Cars Auto Vendas. Todos os direitos reservados.</span>
+    <span>CNPJ 00.000.000/0001-00 · Loja de veículos</span>
+  </div>
+</footer>

@@ -1,0 +1,38 @@
+<header class="header">
+  <div class="container bar">
+    <a routerLink="/" class="logo" aria-label="Brasil Cars">
+      <span class="mark">BC</span>
+      <span>
+        <strong>Brasil Cars</strong>
+        <small>Auto Vendas</small>
+      </span>
+    </a>
+
+    <nav class="nav" [class.open]="menuOpen()">
+      <a routerLink="/comprar" routerLinkActive="active">Estoque</a>
+      <a routerLink="/sobre" routerLinkActive="active">A loja</a>
+      <a routerLink="/faq" routerLinkActive="active">Dúvidas</a>
+      <a routerLink="/contato" routerLinkActive="active">Contato</a>
+      <a [href]="whatsapp" target="_blank" rel="noopener" class="mobile-only">WhatsApp</a>
+    </nav>
+
+    <div class="actions">
+      <a routerLink="/favoritos" class="icon-btn" title="Favoritos">
+        ♥
+        @if (favorites.count() > 0) {
+          <em>{{ favorites.count() }}</em>
+        }
+      </a>
+      <a routerLink="/comparar" class="icon-btn" title="Comparar">
+        ⧉
+        @if (compare.count() > 0) {
+          <em>{{ compare.count() }}</em>
+        }
+      </a>
+      <a [href]="whatsapp" target="_blank" rel="noopener" class="btn btn-primary">Falar no WhatsApp</a>
+      <button class="burger" type="button" (click)="menuOpen.set(!menuOpen())" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</header>

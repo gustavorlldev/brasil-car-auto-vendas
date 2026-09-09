@@ -1,0 +1,37 @@
+@if (dealer(); as shop) {
+  <section class="hero" [style.backgroundImage]="'url(' + shop.image + ')'">
+    <div class="container overlay">
+      <a routerLink="/lojas">← Todas as lojas</a>
+      <h1>{{ shop.name }}</h1>
+      <p>{{ shop.city }}/{{ shop.state }} · desde {{ shop.since }} · {{ shop.rating }} ★</p>
+    </div>
+  </section>
+  <section class="page">
+    <div class="container layout">
+      <aside>
+        <h2>Sobre a loja</h2>
+        <p>{{ shop.description }}</p>
+        <p>{{ shop.address }}</p>
+        <p>{{ shop.phone }}</p>
+        <p>{{ shop.email }}</p>
+        <p>Marcas: {{ shop.brands.join(', ') }}</p>
+        <a class="btn btn-primary" [href]="'https://wa.me/' + shop.whatsapp" target="_blank" rel="noopener">WhatsApp</a>
+      </aside>
+      <div>
+        <h2>{{ stock().length }} veículos no pátio</h2>
+        <div class="grid-cards three">
+          @for (car of stock(); track car.id) {
+            <app-vehicle-card [vehicle]="car" />
+          }
+        </div>
+      </div>
+    </div>
+  </section>
+} @else {
+  <section class="page">
+    <div class="container empty-state">
+      <h3>Loja não encontrada</h3>
+      <a routerLink="/lojas" class="btn btn-primary">Ver lojas</a>
+    </div>
+  </section>
+}

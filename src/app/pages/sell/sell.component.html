@@ -1,0 +1,108 @@
+<section class="page">
+  <div class="container wrap">
+    <div>
+      <p class="eyebrow">Anuncie grátis</p>
+      <h1>Publique seu carro para venda ou revenda.</h1>
+      <p class="lead">O anúncio entra no estoque nacional na hora, com contato direto via WhatsApp.</p>
+      <ol>
+        <li [class.on]="step() === 1">1. Dados do veículo</li>
+        <li [class.on]="step() === 2">2. Ficha técnica</li>
+        <li [class.on]="step() === 3">3. Anúncio e publicação</li>
+      </ol>
+    </div>
+
+    <form [formGroup]="form" (ngSubmit)="submit()">
+      @if (step() === 1) {
+        <div class="card">
+          <h2>Identificação</h2>
+          <div class="two">
+            <label class="field"><span>Marca</span>
+              <select formControlName="brand">
+                <option value="">Selecione</option>
+                @for (brand of brands; track brand) {
+                  <option [value]="brand">{{ brand }}</option>
+                }
+              </select>
+            </label>
+            <label class="field"><span>Modelo</span><input formControlName="model" /></label>
+            <label class="field"><span>Versão</span><input formControlName="version" /></label>
+            <label class="field"><span>Cor</span><input formControlName="color" /></label>
+            <label class="field"><span>Ano fabricação</span><input type="number" formControlName="year" /></label>
+            <label class="field"><span>Ano modelo</span><input type="number" formControlName="modelYear" /></label>
+            <label class="field"><span>Preço</span><input type="number" formControlName="price" /></label>
+            <label class="field"><span>Quilometragem</span><input type="number" formControlName="mileage" /></label>
+          </div>
+          <button class="btn btn-primary" type="button" (click)="next()">Continuar</button>
+        </div>
+      }
+
+      @if (step() === 2) {
+        <div class="card">
+          <h2>Ficha técnica</h2>
+          <div class="two">
+            <label class="field"><span>Combustível</span>
+              <select formControlName="fuel">
+                @for (item of fuels; track item[0]) {
+                  <option [value]="item[0]">{{ item[1] }}</option>
+                }
+              </select>
+            </label>
+            <label class="field"><span>Câmbio</span>
+              <select formControlName="transmission">
+                @for (item of transmissions; track item[0]) {
+                  <option [value]="item[0]">{{ item[1] }}</option>
+                }
+              </select>
+            </label>
+            <label class="field"><span>Carroceria</span>
+              <select formControlName="body">
+                @for (item of bodies; track item[0]) {
+                  <option [value]="item[0]">{{ item[1] }}</option>
+                }
+              </select>
+            </label>
+            <label class="field"><span>Condição</span>
+              <select formControlName="condition">
+                @for (item of conditions; track item[0]) {
+                  <option [value]="item[0]">{{ item[1] }}</option>
+                }
+              </select>
+            </label>
+            <label class="field"><span>Motor</span><input formControlName="engine" /></label>
+            <label class="field"><span>Potência (cv)</span><input type="number" formControlName="horsepower" /></label>
+            <label class="field"><span>Portas</span><input type="number" formControlName="doors" /></label>
+            <label class="field"><span>Itens (separados por vírgula)</span><input formControlName="features" placeholder="Ar digital, Couro, Câmera de ré" /></label>
+          </div>
+          <div class="row">
+            <button class="btn btn-outline" type="button" (click)="prev()">Voltar</button>
+            <button class="btn btn-primary" type="button" (click)="next()">Continuar</button>
+          </div>
+        </div>
+      }
+
+      @if (step() === 3) {
+        <div class="card">
+          <h2>Publicação</h2>
+          <div class="two">
+            <label class="field"><span>Cidade</span><input formControlName="city" /></label>
+            <label class="field"><span>Estado</span>
+              <select formControlName="state">
+                @for (uf of states; track uf) {
+                  <option [value]="uf">{{ uf }}</option>
+                }
+              </select>
+            </label>
+            <label class="field full"><span>URL da foto principal</span><input formControlName="image" /></label>
+            <label class="field full"><span>Descrição</span><textarea rows="5" formControlName="description"></textarea></label>
+          </div>
+          <label class="check"><input type="checkbox" formControlName="acceptsTrade" /> Aceita troca</label>
+          <label class="check"><input type="checkbox" formControlName="singleOwner" /> Único dono</label>
+          <div class="row">
+            <button class="btn btn-outline" type="button" (click)="prev()">Voltar</button>
+            <button class="btn btn-primary" type="submit">Publicar anúncio</button>
+          </div>
+        </div>
+      }
+    </form>
+  </div>
+</section>

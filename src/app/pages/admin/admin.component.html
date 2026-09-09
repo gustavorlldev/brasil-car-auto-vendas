@@ -1,0 +1,94 @@
+<section class="page">
+  <div class="container">
+    @if (!visits.adminUnlocked()) {
+      <div class="login">
+        <p class="eyebrow">Área interna</p>
+        <h1>Painel da loja</h1>
+        <p>Entre para ver as localizações enviadas por quem aceitou no site.</p>
+        <form (submit)="$event.preventDefault(); login()">
+          <label class="field">
+            <span>Senha do painel</span>
+            <input type="password" [(ngModel)]="pin" name="pin" autocomplete="current-password" />
+          </label>
+          @if (error()) {
+            <p class="warn">{{ error() }}</p>
+          }
+          <button class="btn btn-primary" type="submit">Entrar</button>
+        </form>
+      </div>
+    } @else {
+      <div class="head">
+        <div>
+          <p class="eyebrow">Brasil Cars · Blumenau/SC</p>
+          <h1>Visitas com localização</h1>
+          <p>Quem aceitou o aviso do site aparece aqui, com cidade e distância até a loja.</p>
+        </div>
+        <div class="ops">
+          <button class="btn btn-outline" type="button" (click)="visits.clearVisits()">Limpar lista</button>
+          <button class="btn btn-ghost" type="button" (click)="visits.lockAdmin()">Sair</button>
+        </div>
+      </div>
+
+      <div class="stats">
+        <article>
+          <span>Visitas</span>
+          <strong>{{ visits.visits().length }}</strong>
+        </article>
+        <article>
+          <span>Cidades</span>
+          <strong>{{ visits.cities() }}</strong>
+        </article>
+        <article>
+          <span>Loja</span>
+          <strong>{{ company.city }}/{{ company.state }}</strong>
+        </article>
+      </div>
+
+      <p class="note">
+        A localização só chega depois do cliente aceitar no site e no navegador. Neste projeto as visitas ficam neste
+        navegador; em produção um servidor recebe os acessos de outros celulares.
+      </p>
+
+      <div class="grid">
+        <div class="list">
+          @if (visits.visits().length === 0) {
+            <div class="empty-state">
+              <h3>Nenhuma visita ainda</h3>
+              <p>Abra o site em outra aba, aceite a localização e volte aqui.</p>
+            </div>
+          } @else {
+            @for (visit of visits.recent(); track visit.id) {
+              <button type="button" class="visit" [class.on]="selected()?.id === visit.id" (click)="select(visit)">
+                <div>
+                  <h3>{{ visit.label }}</h3>
+                  <p>{{ visit.at | date: 'dd/MM/yyyy HH:mm' }} · {{ visit.path }}</p>
+                </div>
+                <b>{{ visit.kmFromStore ?? '—' }} km</b>
+              </button>
+            }
+          }
+        </div>
+
+        <aside>
+          @if (selected(); as visit) {
+            <div class="card">
+              <h2>{{ visit.label }}</h2>
+              <p>{{ visit.at | date: 'dd/MM/yyyy HH:mm' }}</p>
+              <p>{{ visit.lat }}, {{ visit.lng }}</p>
+              @if (visit.accuracy) {
+                <p>Precisão de cerca de {{ visit.accuracy }} m</p>
+              }
+              <p>{{ visit.kmFromStore }} km da loja em Blumenau</p>
+              <iframe [src]="embedUrl(visit)" title="Mapa da visita" loading="lazy"></iframe>
+              <a class="btn btn-outline" [href]="mapUrl(visit)" target="_blank" rel="noopener">Abrir mapa</a>
+            </div>
+          } @else {
+            <div class="card muted">
+              <p>Selecione uma visita para ver o mapa.</p>
+            </div>
+          }
+        </aside>
+      </div>
+    }
+  </div>
+</section>

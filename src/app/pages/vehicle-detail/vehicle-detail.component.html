@@ -1,0 +1,128 @@
+@if (vehicle(); as car) {
+  <section class="page">
+    <div class="container">
+      <a routerLink="/comprar" class="back">← Voltar ao estoque</a>
+      <div class="grid">
+        <div>
+          <div class="gallery">
+            <div class="stage">
+              <img [src]="car.images[activeImage()]" [alt]="car.brand + ' ' + car.model" />
+            </div>
+            <div class="thumbs">
+              @for (image of car.images; track image; let i = $index) {
+                <button type="button" (click)="setImage(i)" [class.on]="activeImage() === i">
+                  <img [src]="image" [alt]="'Foto ' + (i + 1)" />
+                </button>
+              }
+            </div>
+          </div>
+
+          <div class="panel">
+            <h2>Sobre o veículo</h2>
+            <p>{{ car.description }}</p>
+            <ul class="features">
+              @for (item of car.features; track item) {
+                <li>{{ item }}</li>
+              }
+            </ul>
+            <div class="specs">
+              <div><span>Ano</span><b>{{ car.year }}/{{ car.modelYear }}</b></div>
+              <div><span>Km</span><b>{{ car.mileage | km }}</b></div>
+              <div><span>Câmbio</span><b>{{ labels.transmission[car.transmission] }}</b></div>
+              <div><span>Combustível</span><b>{{ labels.fuel[car.fuel] }}</b></div>
+              <div><span>Carroceria</span><b>{{ labels.body[car.body] }}</b></div>
+              <div><span>Cor</span><b>{{ car.color }}</b></div>
+              <div><span>Motor</span><b>{{ car.engine }}</b></div>
+              <div><span>Potência</span><b>{{ car.horsepower }} cv</b></div>
+              <div><span>Portas</span><b>{{ car.doors }}</b></div>
+              <div><span>Condição</span><b>{{ labels.condition[car.condition] }}</b></div>
+              <div><span>Placa</span><b>{{ car.plate }}</b></div>
+            </div>
+          </div>
+        </div>
+
+        <aside>
+          <div class="offer">
+            <p class="meta">Brasil Cars · {{ company.city }}/{{ company.state }}</p>
+            <h1>{{ car.brand }} {{ car.model }}</h1>
+            <p class="version">{{ car.version }}</p>
+            <strong>{{ car.price | brl }}</strong>
+            @if (car.fipePrice) {
+              <p class="fipe">
+                FIPE {{ car.fipePrice | brl }}
+                @if (fipeDiff(); as diff) {
+                  · {{ diff <= 0 ? 'abaixo' : 'acima' }} da tabela
+                }
+              </p>
+            }
+            <div class="chips">
+              @if (car.singleOwner) { <span class="badge badge-gold">Único dono</span> }
+              @if (car.acceptsTrade) { <span class="badge badge-dark">Aceita troca</span> }
+            </div>
+            <div class="actions">
+              <a class="btn btn-primary" [href]="whatsapp(car.brand + ' ' + car.model)" target="_blank" rel="noopener">WhatsApp da Brasil Cars</a>
+              <button class="btn btn-outline" type="button" (click)="favorites.toggle(car.id)">
+                {{ favorites.has(car.id) ? 'Nos favoritos' : 'Favoritar' }}
+              </button>
+              <button class="btn btn-outline" type="button" (click)="compare.toggle(car.id)">
+                {{ compare.has(car.id) ? 'Na comparação' : 'Comparar' }}
+              </button>
+            </div>
+            <p class="phone">Telefone: {{ company.phone | phoneBr }}</p>
+          </div>
+
+          <div class="panel">
+            <h2>Simulador de financiamento</h2>
+            <label class="field">
+              <span>Entrada</span>
+              <input type="number" [ngModel]="defaultDown(car.price)" (ngModelChange)="downPayment.set(+$event)" />
+            </label>
+            <label class="field">
+              <span>Parcelas</span>
+              <select [ngModel]="months()" (ngModelChange)="months.set(+$event)">
+                <option [ngValue]="12">12x</option>
+                <option [ngValue]="24">24x</option>
+                <option [ngValue]="36">36x</option>
+                <option [ngValue]="48">48x</option>
+                <option [ngValue]="60">60x</option>
+              </select>
+            </label>
+            @if (finance(); as sim) {
+              <div class="result">
+                <span>{{ months() }}x de</span>
+                <b>{{ sim.installment | brl }}</b>
+                <small>Taxa ilustrativa de 1,49% a.m. · CDC</small>
+              </div>
+            }
+          </div>
+
+          <div class="panel seller">
+            <h2>A loja</h2>
+            <h3>Brasil Cars</h3>
+            <p>{{ company.address }}</p>
+            <p>{{ company.hours }}</p>
+          </div>
+        </aside>
+      </div>
+
+      @if (related().length) {
+        <div class="related">
+          <h2>Outros carros da Brasil Cars</h2>
+          <div class="grid-cards">
+            @for (item of related(); track item.id) {
+              <app-vehicle-card [vehicle]="item" />
+            }
+          </div>
+        </div>
+      }
+    </div>
+  </section>
+} @else {
+  <section class="page">
+    <div class="container empty-state">
+      <h3>Veículo não encontrado</h3>
+      <p>Este carro pode ter saído do estoque.</p>
+      <a routerLink="/comprar" class="btn btn-primary">Ver estoque</a>
+    </div>
+  </section>
+}

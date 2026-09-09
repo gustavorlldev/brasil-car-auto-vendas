@@ -1,0 +1,22 @@
+<section class="page">
+  <div class="container wrap">
+    <div>
+      <p class="eyebrow">Fale com a loja</p>
+      <h1>Atendimento Brasil Cars</h1>
+      <p>(47) 3333-2026 · contato&#64;brasilcars.com.br</p>
+      <p>Rua 7 de Setembro, 1.215 — Centro, Blumenau/SC</p>
+      <p>Segunda a sábado, 8h às 20h. Test-drive com agendamento pelo WhatsApp.</p>
+    </div>
+    <form (ngSubmit)="submit()">
+      @if (sent()) {
+        <h2>Mensagem enviada</h2>
+        <p>A equipe da Brasil Cars retorna em até 1 dia útil.</p>
+      } @else {
+        <label class="field"><span>Nome</span><input [(ngModel)]="name" name="name" required /></label>
+        <label class="field"><span>E-mail</span><input [(ngModel)]="email" name="email" type="email" required /></label>
+        <label class="field"><span>Mensagem</span><textarea rows="5" [(ngModel)]="message" name="message" required></textarea></label>
+        <button class="btn btn-primary" type="submit">Enviar</button>
+      }
+    </form>
+  </div>
+</section>

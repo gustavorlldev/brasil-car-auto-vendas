@@ -1,0 +1,16 @@
+<div
+  class="plate"
+  [class.compact]="compact()"
+  [class.overlay]="overlay()"
+  [attr.title]="'Placa de vitrine Brasil Cars · ' + plate()"
+>
+  <span class="store">{{ store() }}</span>
+  <div class="face">
+    <div class="band">
+      <em>BR</em>
+      <span>BRASIL</span>
+      <small>Mercosul</small>
+    </div>
+    <strong>{{ plate() }}</strong>
+  </div>
+</div>

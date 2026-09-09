@@ -1,0 +1,19 @@
+<section class="page">
+  <div class="container">
+    <p class="eyebrow">Lista pessoal</p>
+    <h1>Favoritos</h1>
+    @if (list().length === 0) {
+      <div class="empty-state">
+        <h3>Nenhum veículo salvo</h3>
+        <p>Toque no coração nos anúncios para guardar os carros que você quer acompanhar.</p>
+        <a routerLink="/comprar" class="btn btn-primary">Explorar estoque</a>
+      </div>
+    } @else {
+      <div class="grid-cards">
+        @for (car of list(); track car.id) {
+          <app-vehicle-card [vehicle]="car" />
+        }
+      </div>
+    }
+  </div>
+</section>
