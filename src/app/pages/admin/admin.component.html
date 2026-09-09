@@ -4,7 +4,7 @@
       <div class="login">
         <p class="eyebrow">Área interna</p>
         <h1>Painel da loja</h1>
-        <p>Entre para ver as localizações enviadas por quem aceitou no site.</p>
+        <p>Entre para ver as localizações salvas no sistema, de qualquer celular.</p>
         <form (submit)="$event.preventDefault(); login()">
           <label class="field">
             <span>Senha do painel</span>
@@ -21,10 +21,13 @@
         <div>
           <p class="eyebrow">Brasil Cars · Blumenau/SC</p>
           <h1>Visitas com localização</h1>
-          <p>Quem aceitou o aviso do site aparece aqui, com cidade e distância até a loja.</p>
+          <p>Quem aceitou a localização no site aparece aqui, com cidade e distância até a loja.</p>
         </div>
         <div class="ops">
-          <button class="btn btn-outline" type="button" (click)="visits.clearVisits()">Limpar lista</button>
+          <button class="btn btn-outline" type="button" (click)="visits.refreshVisits()" [disabled]="visits.loading()">
+            {{ visits.loading() ? 'Atualizando…' : 'Atualizar' }}
+          </button>
+          <button class="btn btn-outline" type="button" (click)="visits.clearVisits()" [disabled]="visits.loading()">Limpar lista</button>
           <button class="btn btn-ghost" type="button" (click)="visits.lockAdmin()">Sair</button>
         </div>
       </div>
@@ -45,16 +48,19 @@
       </div>
 
       <p class="note">
-        A localização só chega depois do cliente aceitar no site e no navegador. Neste projeto as visitas ficam neste
-        navegador; em produção um servidor recebe os acessos de outros celulares.
+        A localização só chega depois do cliente aceitar no site e no navegador. Os dados ficam salvos no Supabase e
+        aparecem neste painel em qualquer computador.
       </p>
+      @if (visits.loadError()) {
+        <p class="warn">{{ visits.loadError() }}</p>
+      }
 
       <div class="grid">
         <div class="list">
           @if (visits.visits().length === 0) {
             <div class="empty-state">
               <h3>Nenhuma visita ainda</h3>
-              <p>Abra o site em outra aba, aceite a localização e volte aqui.</p>
+              <p>Abra o site em outro celular, aceite a localização e clique em Atualizar.</p>
             </div>
           } @else {
             @for (visit of visits.recent(); track visit.id) {

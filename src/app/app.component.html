@@ -1,4 +1,4 @@
-<div class="app-shell">
+<div class="app-shell" [inert]="blocked()" [attr.aria-hidden]="blocked() ? 'true' : null">
   <app-header />
   <main>
     <router-outlet />
@@ -12,6 +12,6 @@
       </div>
     </div>
   }
-  <app-location-consent />
   <app-footer />
 </div>
+<app-location-consent />

@@ -1,17 +1,18 @@
 @if (visible()) {
-  <aside class="banner" role="dialog" aria-labelledby="geo-title">
-    <div>
-      <p class="eyebrow" id="geo-title">Localização</p>
-      <p>
-        A Brasil Cars pode usar sua localização aproximada para o atendimento da loja em Blumenau.
-        Só enviamos ao painel interno se você aceitar.
+  <div class="gate" role="dialog" aria-modal="true" aria-labelledby="geo-title" aria-describedby="geo-text">
+    <div class="card">
+      <p class="eyebrow">Localização obrigatória</p>
+      <h2 id="geo-title">É preciso permitir a localização para acessar o site</h2>
+      <p id="geo-text">
+        A Brasil Cars só libera a navegação depois que você autoriza o acesso à sua localização.
+        Sem essa permissão, o site permanece bloqueado.
       </p>
-    </div>
-    <div class="actions">
-      <button class="btn btn-ghost" type="button" (click)="visits.deny()">Agora não</button>
+      @if (visits.lastError()) {
+        <p class="error">{{ visits.lastError() }}</p>
+      }
       <button class="btn btn-primary" type="button" (click)="accept()" [disabled]="visits.capturing()">
-        {{ visits.capturing() ? 'Obtendo…' : 'Aceitar localização' }}
+        {{ visits.capturing() ? 'Solicitando acesso…' : 'Permitir localização' }}
       </button>
     </div>
-  </aside>
+  </div>
 }

@@ -26,10 +26,18 @@ export class LocationConsentComponent {
     const fromRouter = (this.path() || this.router.url || '').split('?')[0];
     const fromWindow = typeof location === 'undefined' ? '' : location.pathname;
     const path = fromRouter.startsWith('/admin') || fromWindow.startsWith('/admin') ? '/admin' : fromRouter || '/';
-    return this.visits.shouldAsk(path);
+    return this.visits.isBlocked(path);
   });
 
   constructor() {
+    effect((onCleanup) => {
+      const locked = this.visible();
+      document.body.style.overflow = locked ? 'hidden' : '';
+      onCleanup(() => {
+        document.body.style.overflow = '';
+      });
+    });
+
     effect(() => {
       const path = this.path() || '/';
       if (this.visits.consent() === 'accepted' && !path.startsWith('/admin')) {

@@ -20,9 +20,9 @@ export class AdminComponent {
   error = signal('');
   selected = signal<LocationVisit | null>(null);
 
-  login(): void {
-    const ok = this.visits.unlockAdmin(this.pin);
-    this.error.set(ok ? '' : 'Senha incorreta.');
+  async login(): Promise<void> {
+    const ok = await this.visits.unlockAdmin(this.pin);
+    this.error.set(ok ? '' : this.visits.loadError() || 'Senha incorreta.');
     this.pin = '';
   }
 
