@@ -66,6 +66,21 @@ export class VehicleDetailComponent {
     this.activeImage.set(index);
   }
 
+  prevImage(): void {
+    const total = this.vehicle()?.images.length ?? 1;
+    this.activeImage.update((i) => (i - 1 + total) % total);
+  }
+
+  nextImage(): void {
+    const total = this.vehicle()?.images.length ?? 1;
+    this.activeImage.update((i) => (i + 1) % total);
+  }
+
+  published(date: string): string {
+    const [year, month, day] = date.split('-');
+    return `${day}/${month}/${year}`;
+  }
+
   whatsapp(model: string): string {
     return COMPANY_WHATSAPP(model);
   }

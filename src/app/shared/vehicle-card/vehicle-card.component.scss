@@ -17,7 +17,7 @@
 .media {
   position: relative;
   display: block;
-  aspect-ratio: 16 / 10;
+  aspect-ratio: 4 / 3;
   overflow: hidden;
   background: #d7d1c5;
 }
@@ -34,6 +34,18 @@
   top: 12px;
   display: flex;
   gap: 6px;
+}
+
+.photo-count {
+  position: absolute;
+  left: 12px;
+  bottom: 12px;
+  background: rgba(18, 22, 28, 0.78);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 8px;
+  border-radius: 999px;
 }
 
 .heart {
@@ -68,7 +80,7 @@
 }
 
 h3 {
-  font-size: 24px;
+  font-size: 22px;
   line-height: 1.1;
 }
 
@@ -77,8 +89,14 @@ h3 {
 }
 
 strong {
-  font-size: 20px;
-  margin: 6px 0 4px;
+  font-size: 22px;
+  margin: 8px 0 0;
+}
+
+.installment {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 600;
 }
 
 ul {
@@ -116,4 +134,53 @@ ul li {
 
 .compare.on {
   color: var(--ink);
+}
+
+:host.is-list {
+  display: block;
+  width: 100%;
+}
+
+.card.list {
+  flex-direction: row;
+  min-height: 214px;
+
+  .media {
+    width: 300px;
+    flex-shrink: 0;
+    aspect-ratio: 4 / 3;
+    border-radius: 0;
+  }
+
+  .body {
+    padding: 18px 20px;
+    gap: 5px;
+  }
+
+  h3 {
+    font-size: 24px;
+  }
+
+  strong {
+    font-size: 26px;
+    margin-top: 4px;
+  }
+
+  .version {
+    min-height: 0;
+  }
+
+  &:hover {
+    transform: none;
+  }
+}
+
+@media (max-width: 720px) {
+  .card.list {
+    flex-direction: column;
+
+    .media {
+      width: 100%;
+    }
+  }
 }

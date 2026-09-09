@@ -25,7 +25,7 @@ export class HomeComponent {
 
   categories = [
     { label: '0 km', query: { condition: 'novo' }, image: '/cars/onix-1.jpg' },
-    { label: 'SUVs', query: { body: 'suv' }, image: '/cars/tcross-1.jpg' },
+    { label: 'SUVs', query: { body: 'suv' }, image: '/cars/x1-1.jpg' },
     { label: 'Picapes', query: { body: 'pickup' }, image: '/cars/strada-1.jpg' },
     { label: 'Hatches', query: { body: 'hatch' }, image: '/cars/polo-1.jpg' },
     { label: 'Até R$ 100 mil', query: { maxPrice: 100000 }, image: '/cars/mobi-1.jpg' },

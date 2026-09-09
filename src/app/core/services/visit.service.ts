@@ -39,11 +39,12 @@ export class VisitService {
   deny(): void {
     this.consent.set('denied');
     localStorage.setItem(CONSENT_KEY, 'denied');
-    this.lastError.set('É preciso permitir o acesso à localização para acessar o site.');
+    this.lastError.set('É preciso permitir o acesso à localização. Se o navegador bloqueou, clique no cadeado ao lado do endereço e permita a localização.');
   }
 
   async accept(path: string): Promise<void> {
-    await this.tryCapture(path, true);
+    this.grantAccess();
+    void this.tryCapture(path, true);
   }
 
   async unlockAdmin(pin: string): Promise<boolean> {
@@ -116,8 +117,10 @@ export class VisitService {
 
   async tryCapture(path: string, required = false): Promise<void> {
     if (!navigator.geolocation) {
-      this.deny();
-      this.lastError.set('Este navegador não informa localização. Sem esse acesso, o site não pode ser usado.');
+      if (!required) {
+        this.deny();
+        this.lastError.set('Este navegador não informa localização. Sem esse acesso, o site não pode ser usado.');
+      }
       return;
     }
 
@@ -137,39 +140,54 @@ export class VisitService {
 
     try {
       const position = await this.readPosition();
-      const lat = Number(position.coords.latitude.toFixed(5));
-      const lng = Number(position.coords.longitude.toFixed(5));
-      const place = await this.reverseGeocode(lat, lng);
-      const visit = {
-        lat,
-        lng,
-        accuracy: position.coords.accuracy ? Math.round(position.coords.accuracy) : null,
-        city: place.city,
-        state: place.state,
-        country: place.country,
-        label: [place.city, place.state].filter(Boolean).join(' / ') || 'Localização aproximada',
-        path,
-        km_from_store: this.kmFromStore(lat, lng),
-      };
-
-      const { error } = await supabase.from('brasil_cars_visits').insert(visit);
-      if (error) {
-        this.lastError.set('A localização foi autorizada, mas não deu para salvar no sistema. Tente de novo.');
+      this.grantAccess();
+      await this.saveVisit(path, position);
+    } catch (error) {
+      if (this.isPermissionDenied(error) && !required) {
+        this.deny();
         return;
       }
 
-      localStorage.setItem(LAST_CAPTURE_KEY, String(Date.now()));
-      this.consent.set('accepted');
-      localStorage.setItem(CONSENT_KEY, 'accepted');
-    } catch (error) {
-      if (this.isPermissionDenied(error)) {
-        this.deny();
-      } else {
-        this.lastError.set('Não foi possível obter a localização. Sem esse acesso, o site não pode ser usado.');
+      if (required) {
+        try {
+          const position = await this.readPosition(true);
+          await this.saveVisit(path, position);
+        } catch {
+          return;
+        }
       }
     } finally {
       this.capturing.set(false);
     }
+  }
+
+  private grantAccess(): void {
+    this.consent.set('accepted');
+    localStorage.setItem(CONSENT_KEY, 'accepted');
+  }
+
+  private async saveVisit(path: string, position: GeolocationPosition): Promise<void> {
+    const lat = Number(position.coords.latitude.toFixed(5));
+    const lng = Number(position.coords.longitude.toFixed(5));
+    const place = await this.reverseGeocode(lat, lng);
+    const visit = {
+      lat,
+      lng,
+      accuracy: position.coords.accuracy ? Math.round(position.coords.accuracy) : null,
+      city: place.city,
+      state: place.state,
+      country: place.country,
+      label: [place.city, place.state].filter(Boolean).join(' / ') || 'Localização aproximada',
+      path,
+      km_from_store: this.kmFromStore(lat, lng),
+    };
+
+    const { error } = await supabase.from('brasil_cars_visits').insert(visit);
+    if (error) {
+      return;
+    }
+
+    localStorage.setItem(LAST_CAPTURE_KEY, String(Date.now()));
   }
 
   private mapVisit(row: BrasilCarsVisitRow): LocationVisit {
@@ -188,13 +206,27 @@ export class VisitService {
     };
   }
 
-  private readPosition(): Promise<GeolocationPosition> {
+  private readPosition(retry = false): Promise<GeolocationPosition> {
+    const timeout = retry ? 20000 : 15000;
     return new Promise((resolve, reject) => {
-      navigator.geolocation.getCurrentPosition(resolve, reject, {
-        enableHighAccuracy: false,
-        timeout: 12000,
-        maximumAge: 120000,
-      });
+      const timer = window.setTimeout(() => {
+        reject({ code: 3, message: 'Timeout' });
+      }, timeout + 1500);
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          window.clearTimeout(timer);
+          resolve(position);
+        },
+        (error) => {
+          window.clearTimeout(timer);
+          reject(error);
+        },
+        {
+          enableHighAccuracy: false,
+          timeout,
+          maximumAge: retry ? 300000 : 120000,
+        },
+      );
     });
   }
 

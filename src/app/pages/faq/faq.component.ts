@@ -26,8 +26,8 @@ export class FaqComponent {
       a: 'É uma simulação ilustrativa de CDC. As condições finais saem após análise de crédito na loja.',
     },
     {
-      q: 'A placa do anúncio é a placa real?',
-      a: 'A placa Mercosul do site é de vitrine, com o nome Brasil Cars. A placa real do veículo é apresentada na loja e na documentação.',
+      q: 'As fotos mostram o veículo completo?',
+      a: 'As fotos são do estoque da loja. Identificações do veículo ficam ocultas no anúncio e a documentação é apresentada na visita ao pátio.',
     },
   ];
 

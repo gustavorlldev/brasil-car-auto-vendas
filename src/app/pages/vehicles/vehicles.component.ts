@@ -33,7 +33,7 @@ export class VehiclesComponent {
 
   filters = signal<VehicleFilters>({ sort: 'recent' });
   page = signal(1);
-  readonly pageSize = 9;
+  readonly pageSize = 10;
 
   readonly results = computed(() => this.catalog.search(this.filters()));
   readonly totalPages = computed(() => Math.max(1, Math.ceil(this.results().length / this.pageSize)));

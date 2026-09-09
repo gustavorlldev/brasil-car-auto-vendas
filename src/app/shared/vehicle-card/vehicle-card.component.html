@@ -1,4 +1,4 @@
-<article class="card">
+<article class="card" [class.list]="layout() === 'list'">
   <a [routerLink]="['/veiculo', vehicle().slug]" class="media">
     <img [src]="vehicle().images[0]" [alt]="vehicle().brand + ' ' + vehicle().model" />
     <div class="chips">
@@ -7,24 +7,28 @@
         <span class="badge badge-gold">Destaque</span>
       }
     </div>
+    <span class="photo-count">{{ vehicle().images.length }} fotos</span>
     <button class="heart" type="button" (click)="toggleFavorite($event)" [class.on]="favorites.has(vehicle().id)">
       ♥
     </button>
   </a>
   <div class="body">
-    <p class="meta">{{ vehicle().year }}/{{ vehicle().modelYear }} · Blumenau/SC</p>
+    <p class="meta">{{ vehicle().brand }} · {{ vehicle().year }}/{{ vehicle().modelYear }}</p>
     <h3>
-      <a [routerLink]="['/veiculo', vehicle().slug]">{{ vehicle().brand }} {{ vehicle().model }}</a>
+      <a [routerLink]="['/veiculo', vehicle().slug]">{{ vehicle().model }} {{ vehicle().version }}</a>
     </h3>
-    <p class="version">{{ vehicle().version }}</p>
     <strong>{{ vehicle().price | brl }}</strong>
+    <p class="installment">ou 48x de {{ installment() | brl }}</p>
     <ul>
-      <li>{{ vehicle().mileage | km }}</li>
+      @if (vehicle().mileage > 0 || vehicle().condition === 'novo') {
+        <li>{{ vehicle().mileage | km }}</li>
+      }
       <li>{{ fuel() }}</li>
-      <li>{{ body() }}</li>
+      <li>{{ transmission() }}</li>
+      <li>{{ vehicle().color }}</li>
     </ul>
     <div class="row">
-      <span>Brasil Cars</span>
+      <span>Blumenau/SC · Anúncio de loja</span>
       <button type="button" class="compare" (click)="toggleCompare($event)" [class.on]="compare.has(vehicle().id)">
         {{ compare.has(vehicle().id) ? 'Na comparação' : 'Comparar' }}
       </button>

@@ -18,12 +18,6 @@
             <button type="button" (click)="remove(car.id)">Remover</button>
           </div>
         }
-        <div class="label">Placa / loja</div>
-        @for (car of cars(); track car.id) {
-          <div>
-            <app-license-plate [plate]="car.plate" store="BRASIL CARS" [compact]="true" />
-          </div>
-        }
         <div class="label">Preço</div>
         @for (car of cars(); track car.id) { <div>{{ car.price | brl }}</div> }
         <div class="label">Ano</div>

@@ -1,6 +1,7 @@
 import { BodyType, Condition, FuelType, Transmission } from '../models/vehicle.model';
 
 export const BRANDS = [
+  'BMW',
   'BYD',
   'Chevrolet',
   'Fiat',

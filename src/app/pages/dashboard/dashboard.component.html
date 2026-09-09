@@ -23,7 +23,7 @@
               <img [src]="ad.images[0]" [alt]="ad.model" />
               <div>
                 <h3>{{ ad.brand }} {{ ad.model }}</h3>
-                <p>{{ ad.price | brl }} · {{ ad.plate }} · {{ ad.published === false ? 'Pausado' : 'Ativo' }}</p>
+                <p>{{ ad.price | brl }} · {{ ad.published === false ? 'Pausado' : 'Ativo' }}</p>
               </div>
               <div class="ops">
                 <a class="btn btn-outline" [routerLink]="['/veiculo', ad.slug]">Ver</a>

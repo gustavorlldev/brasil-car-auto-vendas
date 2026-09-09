@@ -4,11 +4,10 @@ import { BODY_LABELS, CONDITION_LABELS, FUEL_LABELS, TRANSMISSION_LABELS } from 
 import { BrlPipe, KmPipe } from '../../core/pipes/format.pipes';
 import { CompareService } from '../../core/services/compare.service';
 import { VehicleService } from '../../core/services/vehicle.service';
-import { LicensePlateComponent } from '../../shared/license-plate/license-plate.component';
 
 @Component({
   selector: 'app-compare',
-  imports: [RouterLink, BrlPipe, KmPipe, LicensePlateComponent],
+  imports: [RouterLink, BrlPipe, KmPipe],
   templateUrl: './compare.component.html',
   styleUrl: './compare.component.scss',
 })

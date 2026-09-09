@@ -3,8 +3,8 @@
     <div class="head">
       <div>
         <p class="eyebrow">Estoque Brasil Cars</p>
-        <h1>Nossos veículos</h1>
-        <p>{{ results().length }} carros no pátio</p>
+        <h1>Anúncios da loja</h1>
+        <p>{{ results().length }} anúncios em Blumenau/SC</p>
       </div>
       <label class="field sort">
         <span>Ordenar</span>
@@ -96,9 +96,9 @@
             <p>Ajuste os filtros ou limpe a busca para ver o estoque completo.</p>
           </div>
         } @else {
-          <div class="grid-cards three">
+          <div class="listing">
             @for (car of paged(); track car.id) {
-              <app-vehicle-card [vehicle]="car" />
+              <app-vehicle-card [vehicle]="car" layout="list" />
             }
           </div>
           <div class="pager">

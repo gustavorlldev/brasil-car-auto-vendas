@@ -43,3 +43,5 @@ Thumbs.db
 
 # Local photo backup used to cover plates
 /public/cars-raw
+/public/cars-cut
+/public/cars-listing

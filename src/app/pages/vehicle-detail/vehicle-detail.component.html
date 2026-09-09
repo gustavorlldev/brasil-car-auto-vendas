@@ -7,6 +7,11 @@
           <div class="gallery">
             <div class="stage">
               <img [src]="car.images[activeImage()]" [alt]="car.brand + ' ' + car.model" />
+              @if (car.images.length > 1) {
+                <button class="nav prev" type="button" (click)="prevImage()" aria-label="Foto anterior">‹</button>
+                <button class="nav next" type="button" (click)="nextImage()" aria-label="Próxima foto">›</button>
+              }
+              <span class="count">{{ activeImage() + 1 }}/{{ car.images.length }}</span>
             </div>
             <div class="thumbs">
               @for (image of car.images; track image; let i = $index) {
@@ -19,7 +24,7 @@
 
           <div class="panel">
             <h2>Sobre o veículo</h2>
-            <p>{{ car.description }}</p>
+            <p class="lead">{{ car.description }}</p>
             <ul class="features">
               @for (item of car.features; track item) {
                 <li>{{ item }}</li>
@@ -27,7 +32,9 @@
             </ul>
             <div class="specs">
               <div><span>Ano</span><b>{{ car.year }}/{{ car.modelYear }}</b></div>
-              <div><span>Km</span><b>{{ car.mileage | km }}</b></div>
+              @if (car.mileage > 0 || car.condition === 'novo') {
+                <div><span>Km</span><b>{{ car.mileage | km }}</b></div>
+              }
               <div><span>Câmbio</span><b>{{ labels.transmission[car.transmission] }}</b></div>
               <div><span>Combustível</span><b>{{ labels.fuel[car.fuel] }}</b></div>
               <div><span>Carroceria</span><b>{{ labels.body[car.body] }}</b></div>
@@ -36,16 +43,15 @@
               <div><span>Potência</span><b>{{ car.horsepower }} cv</b></div>
               <div><span>Portas</span><b>{{ car.doors }}</b></div>
               <div><span>Condição</span><b>{{ labels.condition[car.condition] }}</b></div>
-              <div><span>Placa</span><b>{{ car.plate }}</b></div>
             </div>
           </div>
         </div>
 
         <aside>
           <div class="offer">
-            <p class="meta">Brasil Cars · {{ company.city }}/{{ company.state }}</p>
+            <p class="meta">Anúncio de loja · Brasil Cars · {{ company.city }}/{{ company.state }} · {{ published(car.createdAt) }}</p>
             <h1>{{ car.brand }} {{ car.model }}</h1>
-            <p class="version">{{ car.version }}</p>
+            <p class="version">{{ car.year }}/{{ car.modelYear }} · {{ car.version }} · {{ car.color }}</p>
             <strong>{{ car.price | brl }}</strong>
             @if (car.fipePrice) {
               <p class="fipe">
@@ -55,6 +61,7 @@
                 }
               </p>
             }
+            <p class="installment">ou {{ months() }}x de {{ finance()?.installment | brl }}</p>
             <div class="chips">
               @if (car.singleOwner) { <span class="badge badge-gold">Único dono</span> }
               @if (car.acceptsTrade) { <span class="badge badge-dark">Aceita troca</span> }
@@ -68,7 +75,7 @@
                 {{ compare.has(car.id) ? 'Na comparação' : 'Comparar' }}
               </button>
             </div>
-            <p class="phone">Telefone: {{ company.phone | phoneBr }}</p>
+            <p class="phone">{{ car.views }} visualizações · Código {{ car.id.toUpperCase() }} · {{ company.phone | phoneBr }}</p>
           </div>
 
           <div class="panel">
@@ -97,10 +104,11 @@
           </div>
 
           <div class="panel seller">
-            <h2>A loja</h2>
+            <h2>Anúncio de loja</h2>
             <h3>Brasil Cars</h3>
             <p>{{ company.address }}</p>
             <p>{{ company.hours }}</p>
+            <p>Seminovos revisados, troca e financiamento no pátio.</p>
           </div>
         </aside>
       </div>
