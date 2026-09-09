@@ -2,16 +2,23 @@
   <div class="gate" role="dialog" aria-modal="true" aria-labelledby="geo-title" aria-describedby="geo-text">
     <div class="card">
       <p class="eyebrow">Localização obrigatória</p>
-      <h2 id="geo-title">É preciso permitir a localização para acessar o site</h2>
-      <p id="geo-text">
-        O site pediu a localização ao abrir, mas o acesso foi recusado.
-        Sem essa permissão, o site permanece bloqueado.
-      </p>
+      @if (visits.consent() === 'denied') {
+        <h2 id="geo-title">A localização foi recusada</h2>
+        <p id="geo-text">
+          Sem essa permissão, o site permanece bloqueado. Toque no cadeado ao lado do endereço,
+          permita a localização e tente de novo.
+        </p>
+      } @else {
+        <h2 id="geo-title">Permita a localização para entrar</h2>
+        <p id="geo-text">
+          Toque no botão abaixo. No celular, o aviso do sistema só aparece depois desse toque.
+        </p>
+      }
       @if (visits.lastError()) {
         <p class="error">{{ visits.lastError() }}</p>
       }
-      <button class="btn btn-primary" type="button" (click)="accept()" [disabled]="visits.capturing()">
-        {{ visits.capturing() ? 'Solicitando acesso…' : 'Tentar novamente' }}
+      <button class="btn btn-primary" type="button" (click)="allow()" [disabled]="visits.capturing()">
+        {{ visits.capturing() ? 'Solicitando acesso…' : visits.consent() === 'denied' ? 'Tentar novamente' : 'Permitir localização' }}
       </button>
     </div>
   </div>

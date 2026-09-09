@@ -15,7 +15,6 @@ const DENIED_HINT =
 @Injectable({ providedIn: 'root' })
 export class VisitService {
   private readonly zone = inject(NgZone);
-  private gestureBound = false;
   private permissionWatchStarted = false;
   private lastPath = '/';
 
@@ -40,7 +39,7 @@ export class VisitService {
     if (path.startsWith('/admin')) {
       return false;
     }
-    return this.consent() === 'denied';
+    return this.consent() !== 'accepted';
   }
 
   deny(message = DENIED_HINT): void {
@@ -49,8 +48,52 @@ export class VisitService {
     this.lastError.set(message);
   }
 
-  async accept(path: string): Promise<void> {
-    await this.tryCapture(path, true);
+  requestNow(path: string): void {
+    this.lastPath = (path || '/').split('?')[0] || '/';
+    if (this.lastPath.startsWith('/admin')) {
+      return;
+    }
+
+    if (!window.isSecureContext) {
+      this.deny('Abra o site pelo endereço seguro (https) para o celular pedir a localização.');
+      return;
+    }
+
+    if (!navigator.geolocation) {
+      this.deny('Este navegador não informa localização. Sem esse acesso, o site não pode ser usado.');
+      return;
+    }
+
+    if (this.capturing()) {
+      return;
+    }
+
+    this.lastError.set('');
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        this.zone.run(() => {
+          this.grantAccess();
+          this.capturing.set(false);
+          void this.saveVisit(this.lastPath, position);
+        });
+      },
+      (error) => {
+        this.zone.run(() => {
+          this.capturing.set(false);
+          if (this.isPermissionDenied(error)) {
+            this.deny();
+            return;
+          }
+          this.lastError.set('Não foi possível obter a localização. Toque em permitir de novo.');
+        });
+      },
+      {
+        enableHighAccuracy: false,
+        timeout: 20000,
+        maximumAge: 0,
+      },
+    );
+    this.capturing.set(true);
   }
 
   ensureAccess(path: string): void {
@@ -60,8 +103,7 @@ export class VisitService {
     }
 
     this.watchPermission();
-    this.bindGesture();
-    void this.tryCapture(this.lastPath);
+    void this.resumeIfAlreadyAllowed();
   }
 
   async unlockAdmin(pin: string): Promise<boolean> {
@@ -132,54 +174,43 @@ export class VisitService {
     this.visits.set([]);
   }
 
-  async tryCapture(path: string, fromGesture = false): Promise<void> {
-    if (!navigator.geolocation) {
-      this.deny('Este navegador não informa localização. Sem esse acesso, o site não pode ser usado.');
+  private async resumeIfAlreadyAllowed(): Promise<void> {
+    if (!window.isSecureContext) {
+      this.deny('Abra o site pelo endereço seguro (https) para o celular pedir a localização.');
       return;
     }
 
-    if (this.lastPath.startsWith('/admin')) {
+    const state = await this.permissionState();
+    if (state === 'granted') {
+      this.grantAccess();
+      void this.captureIfGranted();
       return;
     }
 
-    if (this.consent() === 'denied' && !fromGesture) {
+    const android = /Android/i.test(navigator.userAgent);
+    if (android && this.consent() === 'accepted') {
+      this.consent.set('unknown');
+      localStorage.removeItem(CONSENT_KEY);
+    }
+  }
+
+  private async captureIfGranted(): Promise<void> {
+    if (!navigator.geolocation || this.capturing()) {
       return;
     }
 
-    if (this.capturing() && !fromGesture) {
+    const last = Number(localStorage.getItem(LAST_CAPTURE_KEY) || '0');
+    if (Date.now() - last < MIN_INTERVAL_MS) {
       return;
-    }
-
-    if (this.consent() === 'accepted' && !fromGesture) {
-      const last = Number(localStorage.getItem(LAST_CAPTURE_KEY) || '0');
-      if (Date.now() - last < MIN_INTERVAL_MS) {
-        return;
-      }
-    }
-
-    if (!fromGesture) {
-      const state = await this.permissionState();
-      if (state === 'denied') {
-        this.deny();
-        return;
-      }
     }
 
     this.capturing.set(true);
-    if (fromGesture) {
-      this.lastError.set('');
-    }
-
-    const started = Date.now();
     try {
-      const position = await this.readPosition(fromGesture);
+      const position = await this.readPosition();
       this.grantAccess();
-      await this.saveVisit(path, position);
-    } catch (error) {
-      const waited = Date.now() - started;
-      if (this.isPermissionDenied(error) && (fromGesture || waited > 500)) {
-        this.deny();
-      }
+      await this.saveVisit(this.lastPath, position);
+    } catch {
+      this.grantAccess();
     } finally {
       this.capturing.set(false);
     }
@@ -197,42 +228,18 @@ export class VisitService {
         status.addEventListener('change', () => {
           this.zone.run(() => {
             if (status.state === 'granted') {
-              void this.tryCapture(this.lastPath);
+              this.grantAccess();
+              void this.captureIfGranted();
               return;
             }
 
             if (status.state === 'denied') {
               this.deny();
-              return;
-            }
-
-            if (status.state === 'prompt' && this.consent() === 'denied') {
-              this.consent.set('unknown');
-              localStorage.removeItem(CONSENT_KEY);
-              this.lastError.set('');
-              void this.tryCapture(this.lastPath);
             }
           });
         });
       })
       .catch(() => undefined);
-  }
-
-  private bindGesture(): void {
-    if (this.gestureBound) {
-      return;
-    }
-
-    this.gestureBound = true;
-    window.addEventListener(
-      'pointerdown',
-      () => {
-        if (this.consent() === 'unknown' && !this.capturing()) {
-          void this.tryCapture(this.lastPath, true);
-        }
-      },
-      { passive: true, capture: true },
-    );
   }
 
   private async permissionState(): Promise<PermissionState | 'unknown'> {
@@ -289,25 +296,15 @@ export class VisitService {
     };
   }
 
-  private readPosition(fromGesture = false): Promise<GeolocationPosition> {
-    const timeout = fromGesture ? 20000 : 12000;
+  private readPosition(): Promise<GeolocationPosition> {
     return new Promise((resolve, reject) => {
-      const timer = window.setTimeout(() => {
-        this.zone.run(() => reject({ code: 3, message: 'Timeout' }));
-      }, timeout + 1500);
       navigator.geolocation.getCurrentPosition(
-        (position) => {
-          window.clearTimeout(timer);
-          this.zone.run(() => resolve(position));
-        },
-        (error) => {
-          window.clearTimeout(timer);
-          this.zone.run(() => reject(error));
-        },
+        (position) => this.zone.run(() => resolve(position)),
+        (error) => this.zone.run(() => reject(error)),
         {
           enableHighAccuracy: false,
-          timeout,
-          maximumAge: fromGesture ? 300000 : 60000,
+          timeout: 20000,
+          maximumAge: 60000,
         },
       );
     });

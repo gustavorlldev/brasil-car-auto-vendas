@@ -5,5 +5,13 @@
   "outputDirectory": "dist/brasil-car-auto-vendas/browser",
   "rewrites": [
     { "source": "/(.*)", "destination": "/index.html" }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        { "key": "Permissions-Policy", "value": "geolocation=(self)" }
+      ]
+    }
   ]
 }

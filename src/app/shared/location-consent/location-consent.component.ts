@@ -44,7 +44,7 @@ export class LocationConsentComponent {
     });
   }
 
-  accept(): void {
-    void this.visits.accept(this.path() || '/');
+  allow(): void {
+    this.visits.requestNow(this.path() || '/');
   }
 }
