@@ -1,4 +1,4 @@
-<div class="app-shell" [inert]="blocked()" [attr.aria-hidden]="blocked() ? 'true' : null">
+<div class="app-shell" [class.gated]="blocked()" [inert]="blocked()" [attr.aria-hidden]="blocked() ? 'true' : null">
   <app-header />
   <main>
     <router-outlet />

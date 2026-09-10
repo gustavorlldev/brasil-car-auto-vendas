@@ -16,6 +16,32 @@ const car = (data: Omit<Vehicle, 'plate' | 'views'> & { id: string }): Vehicle =
 
 export const VEHICLES: Vehicle[] = [
   car({
+    id: 'v029',
+    slug: 'volkswagen-jetta-highline-tsi-2018',
+    brand: 'Volkswagen',
+    model: 'Jetta',
+    version: '2.0 TSI Highline 211 cv Gasolina 4p Tiptronic',
+    year: 2017,
+    modelYear: 2018,
+    price: 89940,
+    mileage: 118000,
+    fuel: 'gasolina',
+    transmission: 'automatico',
+    body: 'sedan',
+    color: 'Azul',
+    doors: 4,
+    engine: '2.0 TSI',
+    horsepower: 211,
+    condition: 'usado',
+    description:
+      'Volkswagen Jetta 2.0 TSI Highline 211 cv, gasolina, 4 portas, câmbio Tiptronic. 2017/2018, 118.000 km, azul. IPVA pago e licenciado. À vista R$ 89.940. Aceito troca. Consulte condições de financiamento em Blumenau.',
+    features: ['2.0 TSI 211 cv', 'Tiptronic', 'Highline', 'IPVA pago', 'Licenciado', '4 portas'],
+    images: photos('jetta', 7),
+    featured: true,
+    createdAt: '2026-09-10',
+    acceptsTrade: true,
+  }),
+  car({
     id: 'v028',
     slug: 'bmw-x1-xdrive25i-sport-2016',
     brand: 'BMW',

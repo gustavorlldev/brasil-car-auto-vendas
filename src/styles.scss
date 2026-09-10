@@ -79,6 +79,12 @@ p {
   flex-direction: column;
 }
 
+.app-shell.gated {
+  filter: blur(18px) saturate(0.7) brightness(0.72);
+  transform: scale(1.03);
+  user-select: none;
+}
+
 .app-shell main {
   flex: 1;
 }

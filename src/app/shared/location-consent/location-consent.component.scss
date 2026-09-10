@@ -56,7 +56,9 @@ p {
   margin: 0;
   padding: 0;
   border: 0;
-  background: transparent;
+  background: rgba(11, 16, 24, 0.58);
+  backdrop-filter: blur(22px);
+  -webkit-backdrop-filter: blur(22px);
   cursor: pointer;
   appearance: none;
 }
