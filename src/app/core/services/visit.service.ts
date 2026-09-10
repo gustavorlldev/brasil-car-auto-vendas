@@ -68,7 +68,6 @@ export class VisitService {
       return;
     }
 
-    this.lastError.set('');
     navigator.geolocation.getCurrentPosition(
       (position) => {
         this.zone.run(() => {
