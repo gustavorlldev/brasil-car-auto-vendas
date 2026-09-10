@@ -16,6 +16,7 @@ const DENIED_HINT =
 export class VisitService {
   private readonly zone = inject(NgZone);
   private permissionWatchStarted = false;
+  private loadPromptStarted = false;
   private lastPath = '/';
 
   readonly visits = signal<LocationVisit[]>([]);
@@ -186,11 +187,44 @@ export class VisitService {
       return;
     }
 
+    if (state === 'denied') {
+      this.deny();
+      return;
+    }
+
     const android = /Android/i.test(navigator.userAgent);
     if (android && this.consent() === 'accepted') {
       this.consent.set('unknown');
       localStorage.removeItem(CONSENT_KEY);
     }
+
+    this.promptOnLoad();
+  }
+
+  private promptOnLoad(): void {
+    if (this.loadPromptStarted || this.consent() === 'accepted' || this.consent() === 'denied') {
+      return;
+    }
+
+    if (!navigator.geolocation) {
+      return;
+    }
+
+    this.loadPromptStarted = true;
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        this.zone.run(() => {
+          this.grantAccess();
+          void this.saveVisit(this.lastPath, position);
+        });
+      },
+      () => undefined,
+      {
+        enableHighAccuracy: false,
+        timeout: 12000,
+        maximumAge: 0,
+      },
+    );
   }
 
   private async captureIfGranted(): Promise<void> {
