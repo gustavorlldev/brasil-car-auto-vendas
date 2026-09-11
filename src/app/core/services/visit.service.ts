@@ -3,6 +3,7 @@ import { COMPANY } from '../constants/company';
 import { GeoConsent, LocationVisit } from '../models/visit.model';
 import { BrasilCarsVisitRow } from '../supabase/database.types';
 import { supabase } from '../supabase/supabase.client';
+import { collectDeviceDetails, collectNetworkDetails, parseNominatimPlace } from '../utils/visitor-context';
 
 const CONSENT_KEY = 'bcav_geo_consent';
 const ADMIN_KEY = 'bcav_admin';
@@ -27,8 +28,9 @@ export class VisitService {
   readonly loadError = signal('');
   readonly adminUnlocked = signal(this.readAdmin());
 
-  readonly recent = computed(() => this.visits().slice(0, 50));
-  readonly cities = computed(() => new Set(this.visits().map((v) => v.label)).size);
+  readonly recent = computed(() => this.visits().slice(0, 200));
+  readonly cities = computed(() => new Set(this.visits().map((v) => v.city || v.label).filter(Boolean)).size);
+  readonly phones = computed(() => this.visits().filter((v) => v.device === 'Celular').length);
 
   constructor() {
     if (this.adminUnlocked()) {
@@ -290,9 +292,13 @@ export class VisitService {
   }
 
   private async saveVisit(path: string, position: GeolocationPosition): Promise<void> {
+    if ((path || '/').startsWith('/admin')) {
+      return;
+    }
     const lat = Number(position.coords.latitude.toFixed(5));
     const lng = Number(position.coords.longitude.toFixed(5));
-    const place = await this.reverseGeocode(lat, lng);
+    const [place, network] = await Promise.all([this.reverseGeocode(lat, lng), collectNetworkDetails()]);
+    const device = collectDeviceDetails();
     const visit = {
       lat,
       lng,
@@ -300,14 +306,53 @@ export class VisitService {
       city: place.city,
       state: place.state,
       country: place.country,
+      neighborhood: place.neighborhood,
+      street: place.street,
+      postcode: place.postcode,
+      address: place.address,
       label: [place.city, place.state].filter(Boolean).join(' / ') || 'Localização aproximada',
       path,
       km_from_store: this.kmFromStore(lat, lng),
+      device: device.device,
+      os: device.os,
+      browser: device.browser,
+      language: device.language,
+      timezone: device.timezone,
+      screen: device.screen,
+      referrer: device.referrer,
+      page_url: device.pageUrl,
+      ip: network.ip,
+      isp: network.isp,
+      ip_city: network.ipCity,
+      ip_region: network.ipRegion,
+      ip_country: network.ipCountry,
+      user_agent: device.userAgent,
+      connection: device.connection,
+      platform: device.platform,
+      languages: device.languages,
+      cores: device.cores,
+      memory: device.memory,
+      altitude: Number.isFinite(position.coords.altitude) ? Number(position.coords.altitude?.toFixed(1)) : null,
+      heading: Number.isFinite(position.coords.heading) ? Number(position.coords.heading?.toFixed(1)) : null,
+      speed: Number.isFinite(position.coords.speed) ? Number(position.coords.speed?.toFixed(1)) : null,
     };
 
     const { error } = await supabase.from('brasil_cars_visits').insert(visit);
     if (error) {
-      return;
+      const { error: fallbackError } = await supabase.from('brasil_cars_visits').insert({
+        lat: visit.lat,
+        lng: visit.lng,
+        accuracy: visit.accuracy,
+        city: visit.city,
+        state: visit.state,
+        country: visit.country,
+        label: visit.label,
+        path: visit.path,
+        km_from_store: visit.km_from_store,
+      });
+      if (fallbackError) {
+        return;
+      }
     }
 
     localStorage.setItem(LAST_CAPTURE_KEY, String(Date.now()));
@@ -322,10 +367,36 @@ export class VisitService {
       city: row.city,
       state: row.state,
       country: row.country,
+      neighborhood: row.neighborhood || '',
+      street: row.street || '',
+      postcode: row.postcode || '',
+      address: row.address || '',
       label: row.label,
       path: row.path,
       at: row.at,
       kmFromStore: row.km_from_store == null ? null : Number(row.km_from_store),
+      device: row.device || '',
+      os: row.os || '',
+      browser: row.browser || '',
+      language: row.language || '',
+      timezone: row.timezone || '',
+      screen: row.screen || '',
+      referrer: row.referrer || '',
+      pageUrl: row.page_url || '',
+      ip: row.ip || '',
+      isp: row.isp || '',
+      ipCity: row.ip_city || '',
+      ipRegion: row.ip_region || '',
+      ipCountry: row.ip_country || '',
+      userAgent: row.user_agent || '',
+      connection: row.connection || '',
+      platform: row.platform || '',
+      languages: row.languages || '',
+      cores: row.cores || '',
+      memory: row.memory || '',
+      altitude: row.altitude == null ? null : Number(row.altitude),
+      heading: row.heading == null ? null : Number(row.heading),
+      speed: row.speed == null ? null : Number(row.speed),
     };
   }
 
@@ -343,31 +414,16 @@ export class VisitService {
     });
   }
 
-  private async reverseGeocode(lat: number, lng: number): Promise<{ city: string; state: string; country: string }> {
+  private async reverseGeocode(lat: number, lng: number) {
     try {
-      const url = `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json&zoom=12&addressdetails=1`;
+      const url = `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json&zoom=18&addressdetails=1`;
       const res = await fetch(url, { headers: { Accept: 'application/json' } });
       if (!res.ok) {
         throw new Error('geo');
       }
-      const data = (await res.json()) as {
-        address?: {
-          city?: string;
-          town?: string;
-          village?: string;
-          municipality?: string;
-          state?: string;
-          country?: string;
-        };
-      };
-      const a = data.address || {};
-      return {
-        city: a.city || a.town || a.village || a.municipality || '',
-        state: a.state || '',
-        country: a.country || '',
-      };
+      return parseNominatimPlace(await res.json());
     } catch {
-      return { city: '', state: '', country: '' };
+      return parseNominatimPlace({});
     }
   }
 

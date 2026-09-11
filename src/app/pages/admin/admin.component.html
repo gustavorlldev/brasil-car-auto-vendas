@@ -4,7 +4,7 @@
       <div class="login">
         <p class="eyebrow">Área interna</p>
         <h1>Painel da loja</h1>
-        <p>Entre para ver as localizações salvas no sistema, de qualquer celular.</p>
+        <p>Entre para ver quem acessou o site, com localização e dados do aparelho.</p>
         <form (submit)="$event.preventDefault(); login()">
           <label class="field">
             <span>Senha do painel</span>
@@ -20,15 +20,15 @@
       <div class="head">
         <div>
           <p class="eyebrow">Brasil Cars · Blumenau/SC</p>
-          <h1>Visitas com localização</h1>
-          <p>Quem aceitou a localização no site aparece aqui, com cidade e distância até a loja.</p>
+          <h1>Visitas do site</h1>
+          <p>Clique em uma linha para abrir o mapa e as informações da visita.</p>
         </div>
         <div class="ops">
           <button class="btn btn-outline" type="button" (click)="visits.refreshVisits()" [disabled]="visits.loading()">
             {{ visits.loading() ? 'Atualizando…' : 'Atualizar' }}
           </button>
           <button class="btn btn-outline" type="button" (click)="visits.clearVisits()" [disabled]="visits.loading()">Limpar lista</button>
-          <button class="btn btn-ghost" type="button" (click)="visits.lockAdmin()">Sair</button>
+          <button class="btn btn-ghost" type="button" (click)="logout()">Sair</button>
         </div>
       </div>
 
@@ -42,59 +42,137 @@
           <strong>{{ visits.cities() }}</strong>
         </article>
         <article>
-          <span>Loja</span>
-          <strong>{{ company.city }}/{{ company.state }}</strong>
+          <span>Celulares</span>
+          <strong>{{ visits.phones() }}</strong>
         </article>
       </div>
 
       <p class="note">
-        A localização só chega depois do cliente aceitar no site e no navegador. Os dados ficam salvos no Supabase e
-        aparecem neste painel em qualquer computador.
+        Novas visitas gravam IP, provedor, endereço, aparelho, navegador e página. Visitas antigas mostram só o que já existia.
       </p>
       @if (visits.loadError()) {
         <p class="warn">{{ visits.loadError() }}</p>
       }
 
-      <div class="grid">
-        <div class="list">
-          @if (visits.visits().length === 0) {
-            <div class="empty-state">
-              <h3>Nenhuma visita ainda</h3>
-              <p>Abra o site em outro celular, aceite a localização e clique em Atualizar.</p>
-            </div>
-          } @else {
-            @for (visit of visits.recent(); track visit.id) {
-              <button type="button" class="visit" [class.on]="selected()?.id === visit.id" (click)="select(visit)">
-                <div>
-                  <h3>{{ visit.label }}</h3>
-                  <p>{{ visit.at | date: 'dd/MM/yyyy HH:mm' }} · {{ visit.path }}</p>
-                </div>
-                <b>{{ visit.kmFromStore ?? '—' }} km</b>
-              </button>
-            }
-          }
+      @if (visits.visits().length === 0) {
+        <div class="empty-state">
+          <h3>Nenhuma visita ainda</h3>
+          <p>Abra o site em outro celular, aceite a localização e clique em Atualizar.</p>
         </div>
-
-        <aside>
-          @if (selected(); as visit) {
-            <div class="card">
-              <h2>{{ visit.label }}</h2>
-              <p>{{ visit.at | date: 'dd/MM/yyyy HH:mm' }}</p>
-              <p>{{ visit.lat }}, {{ visit.lng }}</p>
-              @if (visit.accuracy) {
-                <p>Precisão de cerca de {{ visit.accuracy }} m</p>
+      } @else {
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Quando</th>
+                <th>Cidade</th>
+                <th>Bairro</th>
+                <th>Aparelho</th>
+                <th>IP</th>
+                <th>Página</th>
+                <th>Distância</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (visit of visits.recent(); track visit.id) {
+                <tr (click)="open(visit)" (keydown.enter)="open(visit)" tabindex="0">
+                  <td>{{ visit.at | date: 'dd/MM/yyyy HH:mm' }}</td>
+                  <td>{{ value(visit.city || visit.label) }}</td>
+                  <td>{{ value(visit.neighborhood) }}</td>
+                  <td>{{ value(deviceLabel(visit)) }}</td>
+                  <td>{{ value(visit.ip) }}</td>
+                  <td>{{ value(visit.path) }}</td>
+                  <td>{{ visit.kmFromStore == null ? '—' : visit.kmFromStore + ' km' }}</td>
+                </tr>
               }
-              <p>{{ visit.kmFromStore }} km da loja em Blumenau</p>
-              <iframe [src]="embedUrl(visit)" title="Mapa da visita" loading="lazy"></iframe>
-              <a class="btn btn-outline" [href]="mapUrl(visit)" target="_blank" rel="noopener">Abrir mapa</a>
+            </tbody>
+          </table>
+        </div>
+      }
+
+      @if (selected(); as visit) {
+        <div class="overlay" (click)="close()">
+          <div class="sheet" (click)="$event.stopPropagation()" role="dialog" aria-modal="true" [attr.aria-label]="'Visita em ' + visit.label">
+            <div class="sheet-head">
+              <div>
+                <p class="eyebrow">Detalhe da visita</p>
+                <h2>{{ visit.label }}</h2>
+                <p>{{ visit.at | date: 'dd/MM/yyyy HH:mm' }}</p>
+              </div>
+              <button class="btn btn-ghost" type="button" (click)="close()">Fechar</button>
             </div>
-          } @else {
-            <div class="card muted">
-              <p>Selecione uma visita para ver o mapa.</p>
+
+            <div class="sheet-grid">
+              <div class="map-card">
+                <iframe [src]="embedUrl(visit)" title="Mapa da visita" loading="lazy"></iframe>
+                <div class="map-actions">
+                  <a class="btn btn-outline" [href]="mapUrl(visit)" target="_blank" rel="noopener">OpenStreetMap</a>
+                  <a class="btn btn-outline" [href]="googleMapsUrl(visit)" target="_blank" rel="noopener">Google Maps</a>
+                </div>
+              </div>
+
+              <div class="facts">
+                <section>
+                  <h3>Localização</h3>
+                  <dl>
+                    <div><dt>Endereço</dt><dd>{{ value(visit.address) }}</dd></div>
+                    <div><dt>Rua</dt><dd>{{ value(visit.street) }}</dd></div>
+                    <div><dt>Bairro</dt><dd>{{ value(visit.neighborhood) }}</dd></div>
+                    <div><dt>Cidade</dt><dd>{{ value(visit.city) }}</dd></div>
+                    <div><dt>Estado</dt><dd>{{ value(visit.state) }}</dd></div>
+                    <div><dt>País</dt><dd>{{ value(visit.country) }}</dd></div>
+                    <div><dt>CEP</dt><dd>{{ value(visit.postcode) }}</dd></div>
+                    <div><dt>Coordenadas</dt><dd>{{ visit.lat }}, {{ visit.lng }}</dd></div>
+                    <div><dt>Precisão</dt><dd>{{ visit.accuracy ? visit.accuracy + ' m' : '—' }}</dd></div>
+                    <div><dt>Altitude</dt><dd>{{ visit.altitude == null ? '—' : visit.altitude + ' m' }}</dd></div>
+                    <div><dt>Direção</dt><dd>{{ visit.heading == null ? '—' : visit.heading + '°' }}</dd></div>
+                    <div><dt>Velocidade</dt><dd>{{ visit.speed == null ? '—' : visit.speed + ' m/s' }}</dd></div>
+                    <div><dt>Distância da loja</dt><dd>{{ visit.kmFromStore == null ? '—' : visit.kmFromStore + ' km' }}</dd></div>
+                  </dl>
+                </section>
+
+                <section>
+                  <h3>Rede / IP</h3>
+                  <dl>
+                    <div><dt>IP</dt><dd>{{ value(visit.ip) }}</dd></div>
+                    <div><dt>Provedor</dt><dd>{{ value(visit.isp) }}</dd></div>
+                    <div><dt>Cidade do IP</dt><dd>{{ value(visit.ipCity) }}</dd></div>
+                    <div><dt>Região do IP</dt><dd>{{ value(visit.ipRegion) }}</dd></div>
+                    <div><dt>País do IP</dt><dd>{{ value(visit.ipCountry) }}</dd></div>
+                    <div><dt>Conexão</dt><dd>{{ value(visit.connection) }}</dd></div>
+                  </dl>
+                </section>
+
+                <section>
+                  <h3>Aparelho</h3>
+                  <dl>
+                    <div><dt>Dispositivo</dt><dd>{{ value(visit.device) }}</dd></div>
+                    <div><dt>Sistema</dt><dd>{{ value(visit.os) }}</dd></div>
+                    <div><dt>Navegador</dt><dd>{{ value(visit.browser) }}</dd></div>
+                    <div><dt>Plataforma</dt><dd>{{ value(visit.platform) }}</dd></div>
+                    <div><dt>Idioma</dt><dd>{{ value(visit.language) }}</dd></div>
+                    <div><dt>Idiomas</dt><dd>{{ value(visit.languages) }}</dd></div>
+                    <div><dt>Fuso</dt><dd>{{ value(visit.timezone) }}</dd></div>
+                    <div><dt>Tela</dt><dd>{{ value(visit.screen) }}</dd></div>
+                    <div><dt>Núcleos</dt><dd>{{ value(visit.cores) }}</dd></div>
+                    <div><dt>Memória</dt><dd>{{ value(visit.memory) }}</dd></div>
+                    <div><dt>User-Agent</dt><dd>{{ value(visit.userAgent) }}</dd></div>
+                  </dl>
+                </section>
+
+                <section>
+                  <h3>Navegação</h3>
+                  <dl>
+                    <div><dt>Página</dt><dd>{{ value(visit.path) }}</dd></div>
+                    <div><dt>URL</dt><dd>{{ value(visit.pageUrl) }}</dd></div>
+                    <div><dt>Origem</dt><dd>{{ value(visit.referrer) }}</dd></div>
+                  </dl>
+                </section>
+              </div>
             </div>
-          }
-        </aside>
-      </div>
+          </div>
+        </div>
+      }
     }
   </div>
 </section>
